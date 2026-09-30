@@ -1,0 +1,21 @@
+{
+ "id": 135,
+ "name": "jolteon",
+ "gender_rate": 1,
+ "evolves_from_species": {
+  "name": "eevee",
+  "url": "https://pokeapi.co/api/v2/pokemon-species/133/"
+ },
+ "evolution_chain": {
+  "url": "https://pokeapi.co/api/v2/evolution-chain/67/"
+ },
+ "varieties": [
+  {
+   "is_default": true,
+   "pokemon": {
+    "name": "jolteon",
+    "url": "https://pokeapi.co/api/v2/pokemon/135/"
+   }
+  }
+ ]
+}

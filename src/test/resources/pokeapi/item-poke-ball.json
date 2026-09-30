@@ -1,0 +1,8 @@
+{
+ "id": 4,
+ "name": "poke-ball",
+ "category": {
+  "name": "standard-balls",
+  "url": "https://pokeapi.co/api/v2/item-category/34/"
+ }
+}

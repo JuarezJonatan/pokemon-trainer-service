@@ -3,6 +3,8 @@ package skaro.pokeapi.cache;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,6 +108,23 @@ public class ReactiveCacheManagerCacheFacadeTest {
 		verify(cache, never()).put(any(), any());
 	}
 	
+	@Test
+	public void givenACacheMiss_whenTheResourceLookupFails_thenTheErrorIsPropagatedAndNotCached() {
+		String key = UUID.randomUUID().toString();
+		IllegalStateException failure = new IllegalStateException("PokeAPI unavailable");
+		given(cacheManager.getCache(Pokemon.class.getName())).willReturn(cache);
+		given(cache.get(key)).willReturn(null);
+		CacheSpec<Pokemon> cacheSpec = CacheSpec.get(Pokemon.class, key)
+				.orCache(() -> Mono.error(failure));
+
+		Mono<Pokemon> result = facade.get(cacheSpec);
+
+		StepVerifier.create(result)
+			.expectErrorMatches(failure::equals)
+			.verify();
+		then(cache).should(never()).put(any(), any());
+	}
+
 	@Test
 	public void getManyTest() {
 		String key1 = UUID.randomUUID().toString();

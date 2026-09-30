@@ -1,0 +1,35 @@
+{
+ "id": 3,
+ "name": "venusaur",
+ "gender_rate": 1,
+ "evolves_from_species": {
+  "name": "ivysaur",
+  "url": "https://pokeapi.co/api/v2/pokemon-species/2/"
+ },
+ "evolution_chain": {
+  "url": "https://pokeapi.co/api/v2/evolution-chain/1/"
+ },
+ "varieties": [
+  {
+   "is_default": true,
+   "pokemon": {
+    "name": "venusaur",
+    "url": "https://pokeapi.co/api/v2/pokemon/3/"
+   }
+  },
+  {
+   "is_default": false,
+   "pokemon": {
+    "name": "venusaur-mega",
+    "url": "https://pokeapi.co/api/v2/pokemon/10033/"
+   }
+  },
+  {
+   "is_default": false,
+   "pokemon": {
+    "name": "venusaur-gmax",
+    "url": "https://pokeapi.co/api/v2/pokemon/10195/"
+   }
+  }
+ ]
+}

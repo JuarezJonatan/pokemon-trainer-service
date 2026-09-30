@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: pokemon-trainer-service
+  r2dbc:
+    url: ${DB_R2DBC_URL:r2dbc:postgresql://localhost:5432/pokestorage}
+    username: ${DB_USER:pokestorage}
+    password: ${DB_PASSWORD:pokestorage}
+  flyway:
+    url: ${DB_JDBC_URL:jdbc:postgresql://localhost:5432/pokestorage}
+    user: ${DB_USER:pokestorage}
+    password: ${DB_PASSWORD:pokestorage}
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=2000,expireAfterWrite=24h
+
+skaro:
+  pokeapi:
+    base-uri: ${POKEAPI_BASE_URI:https://pokeapi.co/api/v2/}
+    max-bytes-to-buffer: 10000000
+
+pokestorage:
+  storage:
+    team-capacity: 6
+    box-capacity: 30
+  pokeapi:
+    connect-timeout: 2s
+    response-timeout: 5s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  api-docs:
+    version: openapi_3_1
+  override-with-generic-response: false
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    default-models-expand-depth: 1

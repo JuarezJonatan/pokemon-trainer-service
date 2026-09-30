@@ -24,7 +24,7 @@ public class Item implements PokeApiResource, Localizable {
 	private Integer flingPower;
 	private NamedApiResource<ItemFlingEffect> flingEffect;
 	private List<NamedApiResource<ItemAttribute>> attributes;
-	private List<NamedApiResource<ItemCategory>> category;
+	private NamedApiResource<ItemCategory> category;
 	private List<VerboseEffect> effectEntries;
 	private List<VersionGroupFlavorText> flavorTextEntries;
 	private List<GenerationGameIndex> gameIndices;
@@ -70,10 +70,10 @@ public class Item implements PokeApiResource, Localizable {
 	public void setAttributes(List<NamedApiResource<ItemAttribute>> attributes) {
 		this.attributes = attributes;
 	}
-	public List<NamedApiResource<ItemCategory>> getCategory() {
+	public NamedApiResource<ItemCategory> getCategory() {
 		return category;
 	}
-	public void setCategory(List<NamedApiResource<ItemCategory>> category) {
+	public void setCategory(NamedApiResource<ItemCategory> category) {
 		this.category = category;
 	}
 	public List<VerboseEffect> getEffectEntries() {
