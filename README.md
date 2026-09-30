@@ -63,6 +63,8 @@ Flyway creates the schema on startup. Configuration lives in [`application.yml`]
 
 Base path: `/api/v1`. All errors follow **RFC 7807** (`application/problem+json`) and include a stable `code`, so clients don't need to parse messages.
 
+The full contract is published as **OpenAPI 3.1** and browsable in **Swagger UI** (`/swagger-ui.html`): every endpoint documents its request fields (with limits and examples), its responses and each error it can return, with an example per `code`. The document is built from annotations on the controllers and payloads, plus [`OpenApiConfiguration`](src/main/java/com/betwarrior/pokestorage/web/OpenApiConfiguration.java), which holds the API metadata and the reusable error responses.
+
 | Method | Path | Description | Success |
 |---|---|---|---|
 | `POST` | `/trainers` | Register a trainer | `201` + `Location` |
@@ -304,6 +306,7 @@ mvn verify    # + integration with a real Postgres (Testcontainers) and the full
 | PokéAPI adapter | Translation into the domain, 404, retries | `MockWebServer` with trimmed **real** PokéAPI responses ([`src/test/resources/pokeapi`](src/test/resources/pokeapi)) |
 | Persistence (`*IT`) | Full mapping, slot constraint, pagination | `@DataR2dbcTest` + Testcontainers Postgres |
 | API (`*IT`) | All endpoints, error codes, concurrent captures | `@SpringBootTest` + Testcontainers + PokéAPI stub |
+| API docs (`*IT`) | The OpenAPI document exposes every endpoint, example and error response | `@SpringBootTest` + `/v3/api-docs` |
 | Architecture | Dependencies between layers | ArchUnit |
 
 Convention: tests follow a **BDD style without Gherkin**. The method name describes the scenario (`givenX_whenY_thenZ`) and phases are separated by blank lines, without comments.
@@ -311,7 +314,7 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 ## Maintenance guide
 
 - **Adding a business rule:** it goes in `domain`, in the object that owns the data. For example, a rule about moves goes in `MoveSet` or `Species`. It is tested without Spring.
-- **Adding an endpoint:** use case in `application` (one class per use case) → controller method → payload in `*Payloads`. If a new error appears, map it in `ProblemHandler` with a new `code`.
+- **Adding an endpoint:** use case in `application` (one class per use case) → controller method → payload in `*Payloads`. Document it with `@Operation`, `@Schema` on the payload fields and `@ApiResponse(ref = ...)` for its errors. If a new error appears, map it in `ProblemHandler` with a new `code` and add its example to `OpenApiConfiguration`.
 - **Changing the schema:** new migration `V{n}__description.sql`. Already-applied migrations are never edited.
 - **New PokéAPI data:** add it to `Species` and map it in `PokeApiPokemonCatalog`. For tests, add a trimmed fixture to `src/test/resources/pokeapi/` named `{resource}-{name}.json`.
 - **Architecture decisions:** recorded as ADRs in [`docs/adr`](docs/adr).

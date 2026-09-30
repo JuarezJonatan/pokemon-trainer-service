@@ -34,5 +34,11 @@ management:
         include: health,info
 
 springdoc:
+  api-docs:
+    version: openapi_3_1
+  override-with-generic-response: false
+  default-produces-media-type: application/json
   swagger-ui:
     path: /swagger-ui.html
+    display-request-duration: true
+    default-models-expand-depth: 1
