@@ -12,18 +12,15 @@ import com.betwarrior.pokestorage.domain.pokemon.PokemonId;
 import com.betwarrior.pokestorage.domain.pokemon.PokemonSpecimen;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public class EvolvePokemon {
 
 	private final PokemonRepository pokemon;
 	private final PokemonCatalog catalog;
-
-	public EvolvePokemon(PokemonRepository pokemon, PokemonCatalog catalog) {
-		this.pokemon = pokemon;
-		this.catalog = catalog;
-	}
 
 	public Mono<PokemonSpecimen> evolve(TrainerId trainer, PokemonId id, String targetSpecies,
 			Optional<String> ability) {

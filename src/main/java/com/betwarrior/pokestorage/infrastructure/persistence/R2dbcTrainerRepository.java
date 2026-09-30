@@ -9,16 +9,14 @@ import com.betwarrior.pokestorage.application.port.TrainerRepository;
 import com.betwarrior.pokestorage.domain.trainer.Trainer;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Repository
+@RequiredArgsConstructor
 public class R2dbcTrainerRepository implements TrainerRepository {
 
 	private final DatabaseClient database;
-
-	public R2dbcTrainerRepository(DatabaseClient database) {
-		this.database = database;
-	}
 
 	@Override
 	public Mono<Trainer> save(Trainer trainer) {

@@ -296,6 +296,7 @@ PostgreSQL 16 with **reactive (R2DBC)** access, consistent with WebFlux and with
 | If PokéAPI is down, `GET /team` returns `503` | Degrade: return the team without species data | Simple, explicit contract. Degradation is a possible improvement (see evolution) |
 | RFC 7807 errors with `code` | Custom format | Standard, natively supported by Spring 6 |
 | IVs required, EVs optional | Everything optional with random defaults | IVs define the individual; a freshly caught Pokémon has no training (EVs at 0) |
+| Lombok only for injection constructors and loggers | Lombok everywhere (`@Data`, `@Value`, `@Builder`); no Lombok | Domain objects and payloads are Java `record`s, which already remove the boilerplate Lombok is usually added for. Lombok removes what records can't: constructors that only assign dependencies and logger fields. The domain stays free of it |
 | Authorization not implemented | JWT per trainer | Out of scope; left for the proposed evolution |
 
 ## Changes and findings in the inherited library
@@ -368,6 +369,7 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 - **Java 17**, **Spring Boot 3.5** (WebFlux, Data R2DBC, Validation, Cache, Actuator), **Project Reactor**
 - **PostgreSQL 16**, **R2DBC**, **Flyway**
 - **Caffeine** (cache), **springdoc-openapi** (Swagger UI)
+- **Lombok**, only for constructor injection (`@RequiredArgsConstructor`) and logging (`@Slf4j`)
 - **JUnit 5**, **AssertJ**, **Mockito (BDDMockito)**, **Reactor Test**, **Testcontainers**, **OkHttp MockWebServer**, **ArchUnit**, **JaCoCo**
 - **Docker Compose**, **GitHub Actions**
 - **Claude Code** as an AI assistant during design, implementation and review

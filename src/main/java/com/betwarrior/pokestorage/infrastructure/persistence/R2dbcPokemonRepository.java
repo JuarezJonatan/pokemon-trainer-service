@@ -31,10 +31,12 @@ import com.betwarrior.pokestorage.domain.storage.StorageSlot;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
 import io.r2dbc.spi.Readable;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
+@RequiredArgsConstructor
 public class R2dbcPokemonRepository implements PokemonRepository {
 
 	private static final String SLOT_CONSTRAINT = "uq_pokemon_storage_slot";
@@ -70,10 +72,6 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 			where id = :id and trainer_id = :trainer_id""";
 
 	private final DatabaseClient database;
-
-	public R2dbcPokemonRepository(DatabaseClient database) {
-		this.database = database;
-	}
 
 	@Override
 	public Mono<PokemonSpecimen> insert(PokemonSpecimen pokemon) {

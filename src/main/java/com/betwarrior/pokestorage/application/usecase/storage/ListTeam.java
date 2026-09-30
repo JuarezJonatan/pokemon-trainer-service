@@ -12,6 +12,7 @@ import com.betwarrior.pokestorage.application.port.TrainerRepository;
 import com.betwarrior.pokestorage.domain.storage.StorageArea;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 /**
@@ -19,20 +20,13 @@ import reactor.core.publisher.Mono;
  * and the stats resulting from both.
  */
 @Component
+@RequiredArgsConstructor
 public class ListTeam {
 
 	private final TrainerRepository trainers;
 	private final PokemonRepository pokemon;
 	private final PokemonCatalog catalog;
 	private final StorageProperties storage;
-
-	public ListTeam(TrainerRepository trainers, PokemonRepository pokemon, PokemonCatalog catalog,
-			StorageProperties storage) {
-		this.trainers = trainers;
-		this.pokemon = pokemon;
-		this.catalog = catalog;
-		this.storage = storage;
-	}
 
 	public Mono<List<TeamMember>> list(TrainerId trainer) {
 		return trainers.findById(trainer)

@@ -9,20 +9,17 @@ import com.betwarrior.pokestorage.domain.exception.InvalidValueException;
 import com.betwarrior.pokestorage.domain.storage.StorageArea;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public class ListBox {
 
 	public static final int MAX_PAGE_SIZE = 100;
 
 	private final TrainerRepository trainers;
 	private final PokemonRepository pokemon;
-
-	public ListBox(TrainerRepository trainers, PokemonRepository pokemon) {
-		this.trainers = trainers;
-		this.pokemon = pokemon;
-	}
 
 	public Mono<BoxPage> list(TrainerId trainer, int page, int size) {
 		if (page < 0 || size < 1 || size > MAX_PAGE_SIZE) {

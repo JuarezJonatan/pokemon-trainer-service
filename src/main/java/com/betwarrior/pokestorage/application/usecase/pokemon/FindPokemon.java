@@ -8,16 +8,14 @@ import com.betwarrior.pokestorage.domain.pokemon.PokemonId;
 import com.betwarrior.pokestorage.domain.pokemon.PokemonSpecimen;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public class FindPokemon {
 
 	private final PokemonRepository pokemon;
-
-	public FindPokemon(PokemonRepository pokemon) {
-		this.pokemon = pokemon;
-	}
 
 	public Mono<PokemonSpecimen> find(TrainerId trainer, PokemonId id) {
 		return pokemon.findByOwner(trainer, id)

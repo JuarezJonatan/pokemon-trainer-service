@@ -2,8 +2,6 @@ package com.betwarrior.pokestorage.web.error;
 
 import java.net.URI;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,14 +20,15 @@ import com.betwarrior.pokestorage.domain.exception.PokemonNotInTeamException;
 import com.betwarrior.pokestorage.domain.exception.SpeciesRuleViolationException;
 import com.betwarrior.pokestorage.domain.exception.StorageFullException;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Maps domain and application failures to RFC 7807 problem details. Every problem carries a stable
  * {@code code} that clients can rely on instead of parsing messages.
  */
+@Slf4j
 @RestControllerAdvice
 public class ProblemHandler extends ResponseEntityExceptionHandler {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ProblemHandler.class);
 
 	@ExceptionHandler(InvalidValueException.class)
 	ProblemDetail invalidValue(InvalidValueException error) {
@@ -86,7 +85,7 @@ public class ProblemHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CatalogUnavailableException.class)
 	ProblemDetail catalogUnavailable(CatalogUnavailableException error) {
-		LOG.warn("PokeAPI unavailable: {}", error.getMessage(), error.getCause());
+		log.warn("PokeAPI unavailable: {}", error.getMessage(), error.getCause());
 		return problem(HttpStatus.SERVICE_UNAVAILABLE, "pokeapi-unavailable",
 				"PokeAPI is not available right now, please retry later");
 	}

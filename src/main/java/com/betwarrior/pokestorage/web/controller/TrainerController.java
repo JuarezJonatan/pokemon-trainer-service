@@ -25,20 +25,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/trainers")
 @Tag(name = OpenApiConfiguration.TRAINERS_TAG)
+@RequiredArgsConstructor
 public class TrainerController {
 
 	private final RegisterTrainer registerTrainer;
 	private final FindTrainer findTrainer;
-
-	public TrainerController(RegisterTrainer registerTrainer, FindTrainer findTrainer) {
-		this.registerTrainer = registerTrainer;
-		this.findTrainer = findTrainer;
-	}
 
 	@Operation(summary = "Register a trainer",
 			description = "Creates a trainer with an empty team and box. Its id is the one every other endpoint expects.")

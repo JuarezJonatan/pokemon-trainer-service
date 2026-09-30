@@ -41,10 +41,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/trainers/{trainerId}")
+@RequiredArgsConstructor
 public class PokemonController {
 
 	private static final String TRAINER_ID_EXAMPLE = "5f0c2a4e-3b8e-4c1e-9d5a-1b2c3d4e5f60";
@@ -73,17 +75,6 @@ public class PokemonController {
 	private final TransferPokemon transferPokemon;
 	private final EvolvePokemon evolvePokemon;
 	private final StorageProperties storage;
-
-	public PokemonController(CapturePokemon capturePokemon, FindPokemon findPokemon, ListTeam listTeam,
-			ListBox listBox, TransferPokemon transferPokemon, EvolvePokemon evolvePokemon, StorageProperties storage) {
-		this.capturePokemon = capturePokemon;
-		this.findPokemon = findPokemon;
-		this.listTeam = listTeam;
-		this.listBox = listBox;
-		this.transferPokemon = transferPokemon;
-		this.evolvePokemon = evolvePokemon;
-		this.storage = storage;
-	}
 
 	@Tag(name = OpenApiConfiguration.POKEMON_TAG)
 	@Operation(summary = "Capture a Pokemon",

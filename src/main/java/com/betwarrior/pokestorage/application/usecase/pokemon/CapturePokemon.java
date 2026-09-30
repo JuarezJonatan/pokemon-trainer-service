@@ -24,6 +24,7 @@ import com.betwarrior.pokestorage.domain.stats.IndividualValues;
 import com.betwarrior.pokestorage.domain.storage.StorageSlot;
 import com.betwarrior.pokestorage.domain.storage.TrainerStorage;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 /**
@@ -31,6 +32,7 @@ import reactor.core.publisher.Mono;
  * team slot, or in the PC box when the team is full.
  */
 @Component
+@RequiredArgsConstructor
 public class CapturePokemon {
 
 	private final TrainerRepository trainers;
@@ -39,16 +41,6 @@ public class CapturePokemon {
 	private final StorageProperties storage;
 	private final TransactionalOperator transaction;
 	private final Clock clock;
-
-	public CapturePokemon(TrainerRepository trainers, PokemonRepository pokemon, PokemonCatalog catalog,
-			StorageProperties storage, TransactionalOperator transaction, Clock clock) {
-		this.trainers = trainers;
-		this.pokemon = pokemon;
-		this.catalog = catalog;
-		this.storage = storage;
-		this.transaction = transaction;
-		this.clock = clock;
-	}
 
 	public Mono<PokemonSpecimen> capture(CapturePokemonCommand command) {
 		return Mono.fromSupplier(() -> new Individual(command, clock))

@@ -12,6 +12,7 @@ import com.betwarrior.pokestorage.domain.storage.StorageArea;
 import com.betwarrior.pokestorage.domain.storage.TrainerStorage;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 /**
@@ -19,17 +20,12 @@ import reactor.core.publisher.Mono;
  * leaves it untouched.
  */
 @Component
+@RequiredArgsConstructor
 public class TransferPokemon {
 
 	private final PokemonRepository pokemon;
 	private final StorageProperties storage;
 	private final TransactionalOperator transaction;
-
-	public TransferPokemon(PokemonRepository pokemon, StorageProperties storage, TransactionalOperator transaction) {
-		this.pokemon = pokemon;
-		this.storage = storage;
-		this.transaction = transaction;
-	}
 
 	public Mono<PokemonSpecimen> transfer(TrainerId trainer, PokemonId id, StorageArea destination) {
 		Mono<PokemonSpecimen> move = pokemon.findByOwner(trainer, id)
