@@ -9,14 +9,16 @@
 		<version>3.5.16</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>skaro.pokeapi</groupId>
-	<artifactId>pokeapi-reactor</artifactId>
-	<version>1.0.7</version>
-	<name>pokeapi-reactor</name>
-	<description>Non-blocking, reactive API client for PokeAPI</description>
+	<groupId>com.betwarrior</groupId>
+	<artifactId>pokemon-trainer-service</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>pokemon-trainer-service</name>
+	<description>Pokemon trainer storage service (active team and PC box) built on the pokeapi-reactor client</description>
 	<properties>
 		<java.version>17</java.version>
 		<okhttp.version>4.12.0</okhttp.version>
+		<springdoc.version>2.8.17</springdoc.version>
+		<archunit.version>1.4.2</archunit.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -34,6 +36,45 @@
 		<dependency>
 			<groupId>io.projectreactor.netty</groupId>
 			<artifactId>reactor-netty</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-r2dbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>r2dbc-postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+			<version>${springdoc.version}</version>
 		</dependency>
 
 
@@ -60,6 +101,32 @@
 			<version>${okhttp.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>r2dbc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tngtech.archunit</groupId>
+			<artifactId>archunit-junit5</artifactId>
+			<version>${archunit.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -67,9 +134,18 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -100,12 +176,5 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>PokeAPI Reactor Packages</name>
-			<url>https://maven.pkg.github.com/SirSkaro/pokeapi-reactor</url>
-		</repository>
-	</distributionManagement>
 
 </project>
