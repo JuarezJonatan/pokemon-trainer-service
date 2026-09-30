@@ -18,13 +18,13 @@ import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.r2dbc.core.DatabaseClient;
 
-import com.betwarrior.pokestorage.application.SlotAlreadyTakenException;
-import com.betwarrior.pokestorage.domain.PokemonId;
-import com.betwarrior.pokestorage.domain.PokemonSpecimen;
-import com.betwarrior.pokestorage.domain.StorageArea;
-import com.betwarrior.pokestorage.domain.StorageSlot;
-import com.betwarrior.pokestorage.domain.Trainer;
-import com.betwarrior.pokestorage.domain.TrainerId;
+import com.betwarrior.pokestorage.application.exception.SlotAlreadyTakenException;
+import com.betwarrior.pokestorage.domain.pokemon.PokemonId;
+import com.betwarrior.pokestorage.domain.pokemon.PokemonSpecimen;
+import com.betwarrior.pokestorage.domain.storage.StorageArea;
+import com.betwarrior.pokestorage.domain.storage.StorageSlot;
+import com.betwarrior.pokestorage.domain.trainer.Trainer;
+import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 import com.betwarrior.pokestorage.testsupport.PokemonFixtures;
 import com.betwarrior.pokestorage.testsupport.PostgresContainerConfiguration;
 

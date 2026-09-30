@@ -7,13 +7,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.betwarrior.pokestorage.application.PokemonRepository;
-import com.betwarrior.pokestorage.application.SlotAlreadyTakenException;
-import com.betwarrior.pokestorage.domain.PokemonId;
-import com.betwarrior.pokestorage.domain.PokemonSpecimen;
-import com.betwarrior.pokestorage.domain.StorageArea;
-import com.betwarrior.pokestorage.domain.StorageSlot;
-import com.betwarrior.pokestorage.domain.TrainerId;
+import com.betwarrior.pokestorage.application.exception.SlotAlreadyTakenException;
+import com.betwarrior.pokestorage.application.port.PokemonRepository;
+import com.betwarrior.pokestorage.domain.pokemon.PokemonId;
+import com.betwarrior.pokestorage.domain.pokemon.PokemonSpecimen;
+import com.betwarrior.pokestorage.domain.storage.StorageArea;
+import com.betwarrior.pokestorage.domain.storage.StorageSlot;
+import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

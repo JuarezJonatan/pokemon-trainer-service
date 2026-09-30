@@ -5,7 +5,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.betwarrior.pokestorage.domain.*;
+import com.betwarrior.pokestorage.domain.pokemon.CaptureOrigin;
+import com.betwarrior.pokestorage.domain.pokemon.Gender;
+import com.betwarrior.pokestorage.domain.pokemon.Level;
+import com.betwarrior.pokestorage.domain.pokemon.MoveSet;
+import com.betwarrior.pokestorage.domain.pokemon.PokemonId;
+import com.betwarrior.pokestorage.domain.pokemon.PokemonSpecimen;
+import com.betwarrior.pokestorage.domain.species.GenderRatio;
+import com.betwarrior.pokestorage.domain.species.Species;
+import com.betwarrior.pokestorage.domain.species.SpeciesAbility;
+import com.betwarrior.pokestorage.domain.species.SpeciesRef;
+import com.betwarrior.pokestorage.domain.stats.EffortValues;
+import com.betwarrior.pokestorage.domain.stats.IndividualValues;
+import com.betwarrior.pokestorage.domain.stats.Nature;
+import com.betwarrior.pokestorage.domain.stats.StatValues;
+import com.betwarrior.pokestorage.domain.storage.StorageSlot;
+import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
 public final class PokemonFixtures {
 

@@ -16,15 +16,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import com.betwarrior.pokestorage.application.CatalogUnavailableException;
-import com.betwarrior.pokestorage.application.PokemonCatalog;
-import com.betwarrior.pokestorage.application.UnknownCatalogEntryException;
-import com.betwarrior.pokestorage.domain.GenderRatio;
-import com.betwarrior.pokestorage.domain.Species;
-import com.betwarrior.pokestorage.domain.SpeciesAbility;
-import com.betwarrior.pokestorage.domain.SpeciesRef;
-import com.betwarrior.pokestorage.domain.Stat;
-import com.betwarrior.pokestorage.domain.StatValues;
+import com.betwarrior.pokestorage.application.exception.CatalogUnavailableException;
+import com.betwarrior.pokestorage.application.exception.UnknownCatalogEntryException;
+import com.betwarrior.pokestorage.application.port.PokemonCatalog;
+import com.betwarrior.pokestorage.domain.species.GenderRatio;
+import com.betwarrior.pokestorage.domain.species.Species;
+import com.betwarrior.pokestorage.domain.species.SpeciesAbility;
+import com.betwarrior.pokestorage.domain.species.SpeciesRef;
+import com.betwarrior.pokestorage.domain.stats.Stat;
+import com.betwarrior.pokestorage.domain.stats.StatValues;
 
 import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;

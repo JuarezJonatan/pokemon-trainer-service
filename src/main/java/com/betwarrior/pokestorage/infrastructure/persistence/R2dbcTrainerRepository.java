@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 
-import com.betwarrior.pokestorage.application.TrainerRepository;
-import com.betwarrior.pokestorage.domain.Trainer;
-import com.betwarrior.pokestorage.domain.TrainerId;
+import com.betwarrior.pokestorage.application.port.TrainerRepository;
+import com.betwarrior.pokestorage.domain.trainer.Trainer;
+import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
 import reactor.core.publisher.Mono;
 

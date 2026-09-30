@@ -8,12 +8,12 @@ import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import com.betwarrior.pokestorage.application.CatalogUnavailableException;
-import com.betwarrior.pokestorage.application.PokemonCatalog;
-import com.betwarrior.pokestorage.application.UnknownCatalogEntryException;
-import com.betwarrior.pokestorage.domain.Species;
-import com.betwarrior.pokestorage.domain.SpeciesAbility;
-import com.betwarrior.pokestorage.domain.StatValues;
+import com.betwarrior.pokestorage.application.exception.CatalogUnavailableException;
+import com.betwarrior.pokestorage.application.exception.UnknownCatalogEntryException;
+import com.betwarrior.pokestorage.application.port.PokemonCatalog;
+import com.betwarrior.pokestorage.domain.species.Species;
+import com.betwarrior.pokestorage.domain.species.SpeciesAbility;
+import com.betwarrior.pokestorage.domain.stats.StatValues;
 import com.betwarrior.pokestorage.testsupport.PokeApiStub;
 
 import reactor.netty.http.client.HttpClient;

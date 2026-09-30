@@ -63,7 +63,7 @@ Flyway creates the schema on startup. Configuration lives in [`application.yml`]
 
 Base path: `/api/v1`. All errors follow **RFC 7807** (`application/problem+json`) and include a stable `code`, so clients don't need to parse messages.
 
-The full contract is published as **OpenAPI 3.1** and browsable in **Swagger UI** (`/swagger-ui.html`): every endpoint documents its request fields (with limits and examples), its responses and each error it can return, with an example per `code`. The document is built from annotations on the controllers and payloads, plus [`OpenApiConfiguration`](src/main/java/com/betwarrior/pokestorage/web/OpenApiConfiguration.java), which holds the API metadata and the reusable error responses.
+The full contract is published as **OpenAPI 3.1** and browsable in **Swagger UI** (`/swagger-ui.html`): every endpoint documents its request fields (with limits and examples), its responses and each error it can return, with an example per `code`. The document is built from annotations on the controllers and payloads, plus [`OpenApiConfiguration`](src/main/java/com/betwarrior/pokestorage/web/openapi/OpenApiConfiguration.java), which holds the API metadata and the reusable error responses.
 
 | Method | Path | Description | Success |
 |---|---|---|---|
@@ -165,11 +165,42 @@ flowchart LR
 | Package | Responsibility | May depend on |
 |---|---|---|
 | `domain` | Business rules: value objects, specimen, storage, species, evolution, stat formula | nothing (no Spring, Reactor or the library) |
-| `application` | Use cases (`CapturePokemon`, `ListTeam`, `TransferPokemon`, `EvolvePokemon`, …) and the interfaces they need (`PokemonRepository`, `TrainerRepository`, `PokemonCatalog`) | `domain` |
+| `application` | Use cases (`usecase`: `CapturePokemon`, `ListTeam`, `TransferPokemon`, `EvolvePokemon`, …) and the interfaces they need (`port`: `PokemonRepository`, `TrainerRepository`, `PokemonCatalog`) | `domain` |
 | `infrastructure.persistence` | R2DBC implementation of the repositories | `application`, `domain` |
 | `infrastructure.pokeapi` | `PokeApiPokemonCatalog`: translates PokéAPI resources into the domain | `application`, `domain`, library |
-| `web` | HTTP: payloads, format validation and error mapping | `application`, `domain` |
+| `web` | HTTP: controllers, payloads, format validation, error mapping and OpenAPI documentation | `application`, `domain` |
 | `skaro.pokeapi` | Inherited library (PokéAPI client) | only used by `infrastructure.pokeapi` |
+
+Inside each layer, classes are grouped by role or concept, so no layer is a flat list of files:
+
+```text
+com.betwarrior.pokestorage
+├── domain
+│   ├── pokemon        PokemonSpecimen, PokemonId, Level, MoveSet, Gender, CaptureOrigin
+│   ├── stats          Stat, StatValues, IndividualValues, EffortValues, Nature, StatCalculator
+│   ├── species        Species, SpeciesRef, SpeciesAbility, GenderRatio
+│   ├── storage        StorageArea, StorageSlot, StorageCapacity, TrainerStorage
+│   ├── trainer        Trainer, TrainerId
+│   └── exception      DomainException and its subclasses
+├── application
+│   ├── usecase
+│   │   ├── trainer    RegisterTrainer, FindTrainer
+│   │   ├── pokemon    CapturePokemon, FindPokemon, EvolvePokemon
+│   │   └── storage    ListTeam, ListBox, TransferPokemon, SlotRetry
+│   ├── port           PokemonRepository, TrainerRepository, PokemonCatalog
+│   ├── exception      ApplicationException and its subclasses
+│   └── config         StorageProperties, ApplicationConfiguration
+├── infrastructure
+│   ├── persistence    R2dbcPokemonRepository, R2dbcTrainerRepository
+│   └── pokeapi        PokeApiPokemonCatalog, PokeApiClientConfiguration
+└── web
+    ├── controller     TrainerController, PokemonController
+    ├── dto            Request/response payloads
+    ├── error          ProblemHandler (RFC 7807)
+    └── openapi        OpenApiConfiguration, ApiProblem
+```
+
+Tests mirror the same packages.
 
 **Why this style.** The inherited library exposes an anemic, *snake_case* model that has bugs. The domain doesn't know about it: if tomorrow it is replaced by another client, or by a local copy of the data, only `infrastructure.pokeapi` changes. Also, each layer has a clear responsibility, which makes onboarding new people easier.
 
@@ -313,8 +344,8 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 
 ## Maintenance guide
 
-- **Adding a business rule:** it goes in `domain`, in the object that owns the data. For example, a rule about moves goes in `MoveSet` or `Species`. It is tested without Spring.
-- **Adding an endpoint:** use case in `application` (one class per use case) → controller method → payload in `*Payloads`. Document it with `@Operation`, `@Schema` on the payload fields and `@ApiResponse(ref = ...)` for its errors. If a new error appears, map it in `ProblemHandler` with a new `code` and add its example to `OpenApiConfiguration`.
+- **Adding a business rule:** it goes in `domain`, in the concept package and object that own the data. For example, a rule about moves goes in `MoveSet` or `Species`. It is tested without Spring.
+- **Adding an endpoint:** use case in `application.usecase.<feature>` (one class per use case) → controller method in `web.controller` → payload in `web.dto`. Document it with `@Operation`, `@Schema` on the payload fields and `@ApiResponse(ref = ...)` for its errors. If a new error appears, add the exception to the layer's `exception` package, map it in `ProblemHandler` with a new `code` and add its example to `OpenApiConfiguration`.
 - **Changing the schema:** new migration `V{n}__description.sql`. Already-applied migrations are never edited.
 - **New PokéAPI data:** add it to `Species` and map it in `PokeApiPokemonCatalog`. For tests, add a trimmed fixture to `src/test/resources/pokeapi/` named `{resource}-{name}.json`.
 - **Architecture decisions:** recorded as ADRs in [`docs/adr`](docs/adr).

@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.betwarrior.pokestorage.application.PokemonCatalog;
-import com.betwarrior.pokestorage.application.UnknownCatalogEntryException;
-import com.betwarrior.pokestorage.domain.Species;
+import com.betwarrior.pokestorage.application.exception.UnknownCatalogEntryException;
+import com.betwarrior.pokestorage.application.port.PokemonCatalog;
+import com.betwarrior.pokestorage.domain.species.Species;
 
 import reactor.core.publisher.Mono;
 

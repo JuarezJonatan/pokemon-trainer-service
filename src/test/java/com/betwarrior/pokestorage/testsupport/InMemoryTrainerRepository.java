@@ -3,9 +3,9 @@ package com.betwarrior.pokestorage.testsupport;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.betwarrior.pokestorage.application.TrainerRepository;
-import com.betwarrior.pokestorage.domain.Trainer;
-import com.betwarrior.pokestorage.domain.TrainerId;
+import com.betwarrior.pokestorage.application.port.TrainerRepository;
+import com.betwarrior.pokestorage.domain.trainer.Trainer;
+import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
 import reactor.core.publisher.Mono;
 
