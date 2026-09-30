@@ -1,0 +1,55 @@
+{
+  "id": 1,
+  "name": "hp",
+  "game_index": 1,
+  "is_battle_only": false,
+  "affecting_moves": {
+    "increase": [],
+    "decrease": []
+  },
+  "affecting_natures": {
+    "increase": [],
+    "decrease": []
+  },
+  "affecting_items": [
+    {
+      "name": "hp-up",
+      "url": "https://pokeapi.co/api/v2/item/45/"
+    }
+  ],
+  "characteristics": [
+    {
+      "url": "https://pokeapi.co/api/v2/characteristic/1/"
+    },
+    {
+      "url": "https://pokeapi.co/api/v2/characteristic/7/"
+    },
+    {
+      "url": "https://pokeapi.co/api/v2/characteristic/13/"
+    }
+  ],
+  "move_damage_class": null,
+  "names": [
+    {
+      "name": "HP",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "HP",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "name": "HP",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ]
+}

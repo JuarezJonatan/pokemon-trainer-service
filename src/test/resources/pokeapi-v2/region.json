@@ -1,0 +1,69 @@
+{
+  "id": 1,
+  "name": "kanto",
+  "locations": [
+    {
+      "name": "celadon-city",
+      "url": "https://pokeapi.co/api/v2/location/67/"
+    },
+    {
+      "name": "cerulean-city",
+      "url": "https://pokeapi.co/api/v2/location/68/"
+    },
+    {
+      "name": "cinnabar-island",
+      "url": "https://pokeapi.co/api/v2/location/71/"
+    }
+  ],
+  "main_generation": {
+    "name": "generation-i",
+    "url": "https://pokeapi.co/api/v2/generation/1/"
+  },
+  "names": [
+    {
+      "name": "カントー",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "관동",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "name": "關都",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ],
+  "pokedexes": [
+    {
+      "name": "kanto",
+      "url": "https://pokeapi.co/api/v2/pokedex/2/"
+    },
+    {
+      "name": "letsgo-kanto",
+      "url": "https://pokeapi.co/api/v2/pokedex/26/"
+    }
+  ],
+  "version_groups": [
+    {
+      "name": "red-blue",
+      "url": "https://pokeapi.co/api/v2/version-group/1/"
+    },
+    {
+      "name": "yellow",
+      "url": "https://pokeapi.co/api/v2/version-group/2/"
+    },
+    {
+      "name": "gold-silver",
+      "url": "https://pokeapi.co/api/v2/version-group/3/"
+    }
+  ]
+}

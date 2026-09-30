@@ -1,0 +1,50 @@
+{
+  "id": 1,
+  "name": "ball",
+  "awesome_names": [
+    {
+      "awesome_name": "Pomacé",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "awesome_name": "Pomaceous",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "names": [
+    {
+      "name": "Balle",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "name": "Ball",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "pokemon_species": [
+    {
+      "name": "shellder",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/90/"
+    },
+    {
+      "name": "cloyster",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/91/"
+    },
+    {
+      "name": "gastly",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/92/"
+    }
+  ]
+}

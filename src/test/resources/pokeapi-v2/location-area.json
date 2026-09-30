@@ -1,0 +1,338 @@
+{
+  "id": 1,
+  "name": "canalave-city-area",
+  "game_index": 1,
+  "encounter_method_rates": [
+    {
+      "encounter_method": {
+        "name": "old-rod",
+        "url": "https://pokeapi.co/api/v2/encounter-method/2/"
+      },
+      "version_details": [
+        {
+          "rate": 25,
+          "version": {
+            "name": "diamond",
+            "url": "https://pokeapi.co/api/v2/version/12/"
+          }
+        },
+        {
+          "rate": 25,
+          "version": {
+            "name": "pearl",
+            "url": "https://pokeapi.co/api/v2/version/13/"
+          }
+        },
+        {
+          "rate": 25,
+          "version": {
+            "name": "platinum",
+            "url": "https://pokeapi.co/api/v2/version/14/"
+          }
+        }
+      ]
+    },
+    {
+      "encounter_method": {
+        "name": "good-rod",
+        "url": "https://pokeapi.co/api/v2/encounter-method/3/"
+      },
+      "version_details": [
+        {
+          "rate": 50,
+          "version": {
+            "name": "diamond",
+            "url": "https://pokeapi.co/api/v2/version/12/"
+          }
+        },
+        {
+          "rate": 50,
+          "version": {
+            "name": "pearl",
+            "url": "https://pokeapi.co/api/v2/version/13/"
+          }
+        },
+        {
+          "rate": 50,
+          "version": {
+            "name": "platinum",
+            "url": "https://pokeapi.co/api/v2/version/14/"
+          }
+        }
+      ]
+    },
+    {
+      "encounter_method": {
+        "name": "super-rod",
+        "url": "https://pokeapi.co/api/v2/encounter-method/4/"
+      },
+      "version_details": [
+        {
+          "rate": 75,
+          "version": {
+            "name": "diamond",
+            "url": "https://pokeapi.co/api/v2/version/12/"
+          }
+        },
+        {
+          "rate": 75,
+          "version": {
+            "name": "pearl",
+            "url": "https://pokeapi.co/api/v2/version/13/"
+          }
+        },
+        {
+          "rate": 75,
+          "version": {
+            "name": "platinum",
+            "url": "https://pokeapi.co/api/v2/version/14/"
+          }
+        }
+      ]
+    }
+  ],
+  "location": {
+    "name": "canalave-city",
+    "url": "https://pokeapi.co/api/v2/location/1/"
+  },
+  "names": [
+    {
+      "name": "Canalave City",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    },
+    {
+      "name": "Fleetburg",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
+    },
+    {
+      "name": "Joliberges",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    }
+  ],
+  "pokemon_encounters": [
+    {
+      "pokemon": {
+        "name": "tentacool",
+        "url": "https://pokeapi.co/api/v2/pokemon/72/"
+      },
+      "version_details": [
+        {
+          "version": {
+            "name": "diamond",
+            "url": "https://pokeapi.co/api/v2/version/12/"
+          },
+          "max_chance": 60,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 30,
+              "chance": 60,
+              "method": {
+                "name": "surf",
+                "url": "https://pokeapi.co/api/v2/encounter-method/5/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        },
+        {
+          "version": {
+            "name": "pearl",
+            "url": "https://pokeapi.co/api/v2/version/13/"
+          },
+          "max_chance": 60,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 30,
+              "chance": 60,
+              "method": {
+                "name": "surf",
+                "url": "https://pokeapi.co/api/v2/encounter-method/5/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        },
+        {
+          "version": {
+            "name": "platinum",
+            "url": "https://pokeapi.co/api/v2/version/14/"
+          },
+          "max_chance": 60,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 30,
+              "chance": 60,
+              "method": {
+                "name": "surf",
+                "url": "https://pokeapi.co/api/v2/encounter-method/5/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pokemon": {
+        "name": "tentacruel",
+        "url": "https://pokeapi.co/api/v2/pokemon/73/"
+      },
+      "version_details": [
+        {
+          "version": {
+            "name": "diamond",
+            "url": "https://pokeapi.co/api/v2/version/12/"
+          },
+          "max_chance": 5,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 40,
+              "chance": 5,
+              "method": {
+                "name": "surf",
+                "url": "https://pokeapi.co/api/v2/encounter-method/5/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        },
+        {
+          "version": {
+            "name": "pearl",
+            "url": "https://pokeapi.co/api/v2/version/13/"
+          },
+          "max_chance": 5,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 40,
+              "chance": 5,
+              "method": {
+                "name": "surf",
+                "url": "https://pokeapi.co/api/v2/encounter-method/5/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        },
+        {
+          "version": {
+            "name": "platinum",
+            "url": "https://pokeapi.co/api/v2/version/14/"
+          },
+          "max_chance": 9,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 40,
+              "chance": 5,
+              "method": {
+                "name": "surf",
+                "url": "https://pokeapi.co/api/v2/encounter-method/5/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            },
+            {
+              "min_level": 20,
+              "max_level": 40,
+              "chance": 4,
+              "method": {
+                "name": "surf",
+                "url": "https://pokeapi.co/api/v2/encounter-method/5/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pokemon": {
+        "name": "staryu",
+        "url": "https://pokeapi.co/api/v2/pokemon/120/"
+      },
+      "version_details": [
+        {
+          "version": {
+            "name": "diamond",
+            "url": "https://pokeapi.co/api/v2/version/12/"
+          },
+          "max_chance": 15,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 40,
+              "chance": 15,
+              "method": {
+                "name": "super-rod",
+                "url": "https://pokeapi.co/api/v2/encounter-method/4/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        },
+        {
+          "version": {
+            "name": "pearl",
+            "url": "https://pokeapi.co/api/v2/version/13/"
+          },
+          "max_chance": 15,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 40,
+              "chance": 15,
+              "method": {
+                "name": "super-rod",
+                "url": "https://pokeapi.co/api/v2/encounter-method/4/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        },
+        {
+          "version": {
+            "name": "platinum",
+            "url": "https://pokeapi.co/api/v2/version/14/"
+          },
+          "max_chance": 15,
+          "encounter_details": [
+            {
+              "min_level": 20,
+              "max_level": 50,
+              "chance": 15,
+              "method": {
+                "name": "super-rod",
+                "url": "https://pokeapi.co/api/v2/encounter-method/4/"
+              },
+              "condition_values": [],
+              "pokemon_details": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

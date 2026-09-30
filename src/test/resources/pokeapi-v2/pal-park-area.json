@@ -1,0 +1,53 @@
+{
+  "id": 1,
+  "name": "forest",
+  "names": [
+    {
+      "name": "Forêt",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "name": "Bosque",
+      "language": {
+        "name": "es",
+        "url": "https://pokeapi.co/api/v2/language/7/"
+      }
+    },
+    {
+      "name": "Forest",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "pokemon_encounters": [
+    {
+      "base_score": 30,
+      "rate": 50,
+      "pokemon_species": {
+        "name": "caterpie",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/10/"
+      }
+    },
+    {
+      "base_score": 50,
+      "rate": 30,
+      "pokemon_species": {
+        "name": "metapod",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/11/"
+      }
+    },
+    {
+      "base_score": 70,
+      "rate": 20,
+      "pokemon_species": {
+        "name": "butterfree",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/12/"
+      }
+    }
+  ]
+}

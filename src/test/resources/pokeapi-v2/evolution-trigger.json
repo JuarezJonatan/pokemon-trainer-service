@@ -1,0 +1,41 @@
+{
+  "id": 1,
+  "name": "level-up",
+  "names": [
+    {
+      "name": "Montée de niveau",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "name": "Levelaufstieg",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
+    },
+    {
+      "name": "Level up",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "pokemon_species": [
+    {
+      "name": "ivysaur",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/2/"
+    },
+    {
+      "name": "venusaur",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/3/"
+    },
+    {
+      "name": "charmeleon",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/5/"
+    }
+  ]
+}

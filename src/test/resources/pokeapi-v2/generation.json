@@ -1,0 +1,88 @@
+{
+  "id": 1,
+  "name": "generation-i",
+  "abilities": [],
+  "main_region": {
+    "name": "kanto",
+    "url": "https://pokeapi.co/api/v2/region/1/"
+  },
+  "moves": [
+    {
+      "name": "pound",
+      "url": "https://pokeapi.co/api/v2/move/1/"
+    },
+    {
+      "name": "karate-chop",
+      "url": "https://pokeapi.co/api/v2/move/2/"
+    },
+    {
+      "name": "double-slap",
+      "url": "https://pokeapi.co/api/v2/move/3/"
+    }
+  ],
+  "names": [
+    {
+      "name": "だいいちせだい",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "1세대",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "name": "第一世代",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ],
+  "pokemon_species": [
+    {
+      "name": "bulbasaur",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/1/"
+    },
+    {
+      "name": "ivysaur",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/2/"
+    },
+    {
+      "name": "venusaur",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/3/"
+    }
+  ],
+  "types": [
+    {
+      "name": "normal",
+      "url": "https://pokeapi.co/api/v2/type/1/"
+    },
+    {
+      "name": "fighting",
+      "url": "https://pokeapi.co/api/v2/type/2/"
+    },
+    {
+      "name": "flying",
+      "url": "https://pokeapi.co/api/v2/type/3/"
+    }
+  ],
+  "version_groups": [
+    {
+      "name": "red-blue",
+      "url": "https://pokeapi.co/api/v2/version-group/1/"
+    },
+    {
+      "name": "yellow",
+      "url": "https://pokeapi.co/api/v2/version-group/2/"
+    },
+    {
+      "name": "red-green-japan",
+      "url": "https://pokeapi.co/api/v2/version-group/28/"
+    }
+  ]
+}

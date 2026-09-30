@@ -1,0 +1,41 @@
+{
+  "id": 1,
+  "name": "black",
+  "names": [
+    {
+      "name": "くろいろ",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "검정",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "name": "黑色",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ],
+  "pokemon_species": [
+    {
+      "name": "snorlax",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/143/"
+    },
+    {
+      "name": "umbreon",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/197/"
+    },
+    {
+      "name": "murkrow",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/198/"
+    }
+  ]
+}

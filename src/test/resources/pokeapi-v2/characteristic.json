@@ -1,0 +1,36 @@
+{
+  "id": 1,
+  "gene_modulo": 0,
+  "possible_values": [
+    0,
+    5,
+    10
+  ],
+  "highest_stat": {
+    "name": "hp",
+    "url": "https://pokeapi.co/api/v2/stat/1/"
+  },
+  "descriptions": [
+    {
+      "description": "たべるのが　だいすき",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "description": "먹는 것을 제일 좋아함",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "description": "非常喜歡吃東西",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ]
+}

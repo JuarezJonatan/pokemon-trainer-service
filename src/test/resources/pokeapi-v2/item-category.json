@@ -1,0 +1,38 @@
+{
+  "id": 1,
+  "name": "stat-boosts",
+  "items": [
+    {
+      "name": "guard-spec",
+      "url": "https://pokeapi.co/api/v2/item/55/"
+    },
+    {
+      "name": "dire-hit",
+      "url": "https://pokeapi.co/api/v2/item/56/"
+    },
+    {
+      "name": "x-attack",
+      "url": "https://pokeapi.co/api/v2/item/57/"
+    }
+  ],
+  "names": [
+    {
+      "name": "Augmentations de stats",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "name": "Stat boosts",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "pocket": {
+    "name": "battle",
+    "url": "https://pokeapi.co/api/v2/item-pocket/7/"
+  }
+}

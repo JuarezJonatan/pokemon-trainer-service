@@ -1,0 +1,64 @@
+{
+  "id": 1,
+  "name": "level-up",
+  "names": [
+    {
+      "name": "Montée de niveau",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "name": "Level up",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
+    },
+    {
+      "name": "Nivel",
+      "language": {
+        "name": "es",
+        "url": "https://pokeapi.co/api/v2/language/7/"
+      }
+    }
+  ],
+  "descriptions": [
+    {
+      "description": "Appris lorsqu’un Pokémon atteint un certain niveau.",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "description": "Wird gelernt, wenn ein Pokémon ein bestimmtes Level erreicht.",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
+    },
+    {
+      "description": "Se aprende cuando un pokemon alcanza un cierto nivel.",
+      "language": {
+        "name": "es",
+        "url": "https://pokeapi.co/api/v2/language/7/"
+      }
+    }
+  ],
+  "version_groups": [
+    {
+      "name": "red-blue",
+      "url": "https://pokeapi.co/api/v2/version-group/1/"
+    },
+    {
+      "name": "yellow",
+      "url": "https://pokeapi.co/api/v2/version-group/2/"
+    },
+    {
+      "name": "gold-silver",
+      "url": "https://pokeapi.co/api/v2/version-group/3/"
+    }
+  ]
+}
