@@ -28,6 +28,12 @@ import skaro.pokeapi.client.PokeApiEndpointRegistry;
 import skaro.pokeapi.client.PokeApiEntityFactory;
 import skaro.pokeapi.client.WebClientEntityFactory;
 
+/**
+ * @deprecated Replaced by {@link com.betwarrior.pokeapi.PokeApi}, a declarative client with immutable records,
+ *             typed errors and Spring caching. See {@code docs/adr/0002-pokeapi-client-v2.md}. This library will be
+ *             removed in the next release.
+ */
+@Deprecated(since = "2.0", forRemoval = true)
 @Configuration
 @Import(PokeApiReactorEndpointConfiguration.class)
 public class PokeApiReactorBaseConfiguration {
