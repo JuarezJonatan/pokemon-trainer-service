@@ -13,7 +13,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 
-import reactor.cache.CacheMono;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Signal;
@@ -44,9 +43,19 @@ public class ReactiveCacheManagerCacheFacade implements CacheFacade {
 	}
 	
 	private <T extends PokeApiResource> Mono<T> getOrCache(Class<T> cls, String resourceName, Supplier<Mono<T>> onCacheMiss) {
-		return CacheMono.lookup(key -> checkCache(cls, key), resourceName) 
-				.onCacheMissResume(onCacheMiss)
-				.andWriteWith((key, value) -> writeToCache(cls, key, value));
+		return Mono.defer(() -> checkCache(cls, resourceName))
+				.switchIfEmpty(Mono.defer(() -> onCacheMiss.get()
+						.materialize()
+						.flatMap(signal -> cacheIfValue(cls, resourceName, signal))))
+				.dematerialize();
+	}
+
+	// Only values are cached: caching an error signal would pin a transient PokeAPI failure until eviction.
+	private <T extends PokeApiResource> Mono<Signal<? extends T>> cacheIfValue(Class<T> cls, String key, Signal<? extends T> signal) {
+		if (!signal.isOnNext()) {
+			return Mono.just(signal);
+		}
+		return writeToCache(cls, key, signal).thenReturn(signal);
 	}
 	
 	private <T extends PokeApiResource> Mono<Signal<? extends T>> checkCache(Class<T> cls, String key) {
