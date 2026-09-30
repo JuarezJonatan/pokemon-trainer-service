@@ -252,7 +252,7 @@ PostgreSQL 16 with **reactive (R2DBC)** access, consistent with WebFlux and with
 
 | Decision | Alternatives considered | Why |
 |---|---|---|
-| Spring Boot 3.5 + Java 17 ([ADR 0001](docs/adr/0001-migracion-spring-boot-3.md)) | Stay on 2.4.3; 2.7; 4.1 | 2.x is unsupported. 4.1 means Jackson 3, which the library relies on heavily. 3.5 brings Java 17, `jakarta` and `ProblemDetail` with limited risk |
+| Spring Boot 3.5 + Java 17 ([ADR 0001](docs/adr/0001-migrate-to-spring-boot-3.md)) | Stay on 2.4.3; 2.7; 4.1 | 2.x is unsupported. 4.1 means Jackson 3, which the library relies on heavily. 3.5 brings Java 17, `jakarta` and `ProblemDetail` with limited risk |
 | Single module with layers + ArchUnit | Maven multi-module; JPMS | Less ceremony. ArchUnit gives a guarantee similar to separate modules |
 | WebFlux + R2DBC | Spring MVC + JPA | The library is reactive; mixing blocking and reactive models adds complexity and the risk of blocking the event loop |
 | Flat columns | JSONB with all the genetics | Invariants are also enforced in the database (`CHECK`) and the data is queryable. JSONB is more flexible but opaque |
