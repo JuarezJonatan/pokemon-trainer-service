@@ -33,7 +33,7 @@ Service that manages **each trainer's individual Pokémon**, separating the **Ac
 
 ## How to run it
 
-Requirements: **Java 17**, **Maven 3.9+** and **Docker** (for Postgres and the integration tests).
+Requirements: **Java 21**, **Maven 3.9+** and **Docker** (for Postgres and the integration tests).
 
 ```bash
 docker compose up -d                 # Postgres 16 on localhost:5432
@@ -366,7 +366,7 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 
 ## Tools used
 
-- **Java 17**, **Spring Boot 3.5** (WebFlux, Data R2DBC, Validation, Cache, Actuator), **Project Reactor**
+- **Java 21**, **Spring Boot 3.5** (WebFlux, Data R2DBC, Validation, Cache, Actuator), **Project Reactor**
 - **PostgreSQL 16**, **R2DBC**, **Flyway**
 - **Caffeine** (cache), **springdoc-openapi** (Swagger UI)
 - **Lombok**, only for constructor injection (`@RequiredArgsConstructor`) and logging (`@Slf4j`)
