@@ -1,11 +1,11 @@
 package com.betwarrior.pokestorage.domain;
 
-import static com.betwarrior.pokestorage.domain.DomainFixtures.eevee;
-import static com.betwarrior.pokestorage.domain.DomainFixtures.gyarados;
-import static com.betwarrior.pokestorage.domain.DomainFixtures.magikarp;
-import static com.betwarrior.pokestorage.domain.DomainFixtures.magnemite;
-import static com.betwarrior.pokestorage.domain.DomainFixtures.pikachu;
-import static com.betwarrior.pokestorage.domain.DomainFixtures.vaporeon;
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.eevee;
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.gyarados;
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.magikarp;
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.magnemite;
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.pikachu;
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.vaporeon;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
