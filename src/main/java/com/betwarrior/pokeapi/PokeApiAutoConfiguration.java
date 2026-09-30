@@ -37,7 +37,14 @@ public class PokeApiAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public PokeApi pokeApi(ObjectProvider<WebClient.Builder> webClientBuilder, PokeApiProperties properties) {
-		WebClient webClient = webClientBuilder.getIfAvailable(WebClient::builder)
+		return createClient(webClientBuilder.getIfAvailable(WebClient::builder), properties);
+	}
+
+	/**
+	 * Builds the client without a Spring context, e.g. in tests or plain applications.
+	 */
+	public static PokeApi createClient(WebClient.Builder webClientBuilder, PokeApiProperties properties) {
+		WebClient webClient = webClientBuilder
 				.baseUrl(properties.baseUrl().toString())
 				.clientConnector(new ReactorClientHttpConnector(httpClient(properties)))
 				.codecs(codecs -> codecs.defaultCodecs().jackson2JsonDecoder(jsonDecoder(properties)))

@@ -38,7 +38,7 @@ class PokemonStorageApiIT {
 
 	@DynamicPropertySource
 	static void pointToPokeApiStub(DynamicPropertyRegistry registry) {
-		registry.add("skaro.pokeapi.base-uri", POKE_API::baseUrl);
+		registry.add("pokeapi.base-url", POKE_API::baseUrl);
 	}
 
 	@AfterAll

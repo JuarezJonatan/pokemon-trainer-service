@@ -14,18 +14,15 @@ spring:
     caffeine:
       spec: maximumSize=2000,expireAfterWrite=24h
 
-skaro:
-  pokeapi:
-    base-uri: ${POKEAPI_BASE_URI:https://pokeapi.co/api/v2/}
-    max-bytes-to-buffer: 10000000
+pokeapi:
+  base-url: ${POKEAPI_BASE_URL:https://pokeapi.co/api/v2}
+  connect-timeout: 2s
+  response-timeout: 5s
 
 pokestorage:
   storage:
     team-capacity: 6
     box-capacity: 30
-  pokeapi:
-    connect-timeout: 2s
-    response-timeout: 5s
 
 management:
   endpoints:
