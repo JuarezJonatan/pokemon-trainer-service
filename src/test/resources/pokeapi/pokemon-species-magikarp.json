@@ -1,0 +1,18 @@
+{
+ "id": 129,
+ "name": "magikarp",
+ "gender_rate": 4,
+ "evolves_from_species": null,
+ "evolution_chain": {
+  "url": "https://pokeapi.co/api/v2/evolution-chain/64/"
+ },
+ "varieties": [
+  {
+   "is_default": true,
+   "pokemon": {
+    "name": "magikarp",
+    "url": "https://pokeapi.co/api/v2/pokemon/129/"
+   }
+  }
+ ]
+}

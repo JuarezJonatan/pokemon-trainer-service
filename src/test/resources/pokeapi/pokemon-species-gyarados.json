@@ -1,0 +1,28 @@
+{
+ "id": 130,
+ "name": "gyarados",
+ "gender_rate": 4,
+ "evolves_from_species": {
+  "name": "magikarp",
+  "url": "https://pokeapi.co/api/v2/pokemon-species/129/"
+ },
+ "evolution_chain": {
+  "url": "https://pokeapi.co/api/v2/evolution-chain/64/"
+ },
+ "varieties": [
+  {
+   "is_default": true,
+   "pokemon": {
+    "name": "gyarados",
+    "url": "https://pokeapi.co/api/v2/pokemon/130/"
+   }
+  },
+  {
+   "is_default": false,
+   "pokemon": {
+    "name": "gyarados-mega",
+    "url": "https://pokeapi.co/api/v2/pokemon/10041/"
+   }
+  }
+ ]
+}

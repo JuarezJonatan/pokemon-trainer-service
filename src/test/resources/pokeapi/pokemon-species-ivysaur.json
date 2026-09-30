@@ -1,0 +1,21 @@
+{
+ "id": 2,
+ "name": "ivysaur",
+ "gender_rate": 1,
+ "evolves_from_species": {
+  "name": "bulbasaur",
+  "url": "https://pokeapi.co/api/v2/pokemon-species/1/"
+ },
+ "evolution_chain": {
+  "url": "https://pokeapi.co/api/v2/evolution-chain/1/"
+ },
+ "varieties": [
+  {
+   "is_default": true,
+   "pokemon": {
+    "name": "ivysaur",
+    "url": "https://pokeapi.co/api/v2/pokemon/2/"
+   }
+  }
+ ]
+}
