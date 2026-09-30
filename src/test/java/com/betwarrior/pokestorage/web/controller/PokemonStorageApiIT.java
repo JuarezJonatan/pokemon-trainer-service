@@ -247,6 +247,17 @@ class PokemonStorageApiIT {
 	}
 
 	@Test
+	void givenASpeciesAlreadyLookedUp_whenCapturingItAgain_thenPokeApiIsServedFromTheCache() {
+		Map<String, Object> magnemite = captureRequest("magnemite", "sturdy", List.of("tackle"), "GENDERLESS");
+
+		capture(magnemite);
+		capture(magnemite);
+
+		assertThat(POKE_API.requestsTo("pokemon-species/magnemite")).isEqualTo(1);
+		assertThat(POKE_API.requestsTo("pokemon/81")).isEqualTo(1);
+	}
+
+	@Test
 	void givenAnUnknownTrainerOrPokemon_whenRequestingIt_thenNotFoundProblemsAreReturned() {
 		http.get().uri("/api/v1/trainers/{t}/team", "00000000-0000-0000-0000-000000000000").exchange()
 				.expectStatus().isNotFound().expectBody().jsonPath("$.code").isEqualTo("not-found");
