@@ -11,6 +11,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -53,6 +54,7 @@ public class PokeApiPokemonCatalog implements PokemonCatalog {
 	private final PokeApiClient client;
 	private final Retry transientFailures;
 
+	@Autowired
 	public PokeApiPokemonCatalog(PokeApiClient client) {
 		this(client, Duration.ofMillis(200));
 	}
