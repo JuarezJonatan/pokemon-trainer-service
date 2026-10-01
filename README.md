@@ -28,6 +28,7 @@ Service that manages **each trainer's individual Pokémon**, separating the **Ac
 - **Detail** of a specimen with all its technical, genetic and origin metadata.
 - **Active team** as a **composite view**: the specimen's data is combined with the species data from PokéAPI (types, base stats, sprite) and with the **stats calculated** using the games' official formula.
 - Paginated **box**.
+- Paginated listings of **all trainers** and **all Pokémon**, across trainers, as utility endpoints.
 - **Transfer** between team and box, with capacity validation.
 - **Evolution** (bonus): validates that the target species is a **direct** evolution, including branched lines such as Eevee. It reassigns the ability and preserves identity, genetics, held item, history and **the exact slot** in the team.
 
@@ -68,7 +69,9 @@ The full contract is published as **OpenAPI 3.1** and browsable in **Swagger UI*
 | Method | Path | Description | Success |
 |---|---|---|---|
 | `POST` | `/trainers` | Register a trainer | `201` + `Location` |
+| `GET` | `/trainers?page=0&size=20` | List all trainers, in registration order (paginated) | `200` |
 | `GET` | `/trainers/{trainerId}` | Get a trainer | `200` |
+| `GET` | `/pokemon?page=0&size=20` | List every stored Pokémon of all trainers, in storage order (paginated) | `200` |
 | `POST` | `/trainers/{trainerId}/pokemon` | Capture / create a specimen (goes to the team or the box) | `201` + `Location` |
 | `GET` | `/trainers/{trainerId}/pokemon/{pokemonId}` | Specimen detail | `200` |
 | `GET` | `/trainers/{trainerId}/team` | Active team (composite view with PokéAPI) | `200` |
@@ -80,7 +83,7 @@ The full contract is published as **OpenAPI 3.1** and browsable in **Swagger UI*
 
 | HTTP | `code` | When |
 |---|---|---|
-| 400 | `invalid-value` | An invariant is broken: IV outside 0–31, EV > 252 or total > 510, more than 4 moves, level outside 1–100, etc. |
+| 400 | `invalid-value` | An invariant is broken: IV outside 0–31, EV > 252 or total > 510, more than 4 moves, level outside 1–100, page < 0 or size outside 1–100, etc. |
 | 400 | *(Spring)* | Malformed JSON, missing required field, invalid enum or UUID |
 | 404 | `not-found` | Trainer or specimen doesn't exist (or belongs to another trainer) |
 | 409 | `storage-full` | Team or box is full (`area` says which) |
@@ -124,6 +127,11 @@ curl -s localhost:8080/api/v1/trainers/$TRAINER/team
 #    "pokemon":{...specimen detail...},
 #    "species":{"id":25,"name":"pikachu","types":["electric"],"baseStats":{...},"spriteUrl":"..."},
 #    "stats":{"hp":60,"attack":36,"defense":32,"specialAttack":53,"specialDefense":37,"speed":80}}]}
+
+# Every trainer / every Pokémon, page by page
+curl -s 'localhost:8080/api/v1/trainers?page=0&size=20'
+curl -s 'localhost:8080/api/v1/pokemon?page=0&size=20'
+# {"pokemon":[{...specimen detail with trainerId and storage...}],"page":0,"size":20,"totalElements":42,"totalPages":3}
 
 # Deposit into the box / withdraw to the team
 curl -s -X PUT localhost:8080/api/v1/trainers/$TRAINER/pokemon/$POKEMON/storage -H 'Content-Type: application/json' -d '{"area":"BOX"}'
@@ -184,17 +192,18 @@ com.betwarrior.pokestorage
 │   └── exception      DomainException and its subclasses
 ├── application
 │   ├── usecase
-│   │   ├── trainer    RegisterTrainer, FindTrainer
-│   │   ├── pokemon    CapturePokemon, FindPokemon, EvolvePokemon
+│   │   ├── trainer    RegisterTrainer, FindTrainer, ListTrainers
+│   │   ├── pokemon    CapturePokemon, FindPokemon, EvolvePokemon, ListAllPokemon
 │   │   └── storage    ListTeam, ListBox, TransferPokemon, SlotRetry
 │   ├── port           PokemonRepository, TrainerRepository, PokemonCatalog
+│   ├── pagination     PageRequest (validates page and size), Page<T>
 │   ├── exception      ApplicationException and its subclasses
 │   └── config         StorageProperties, ApplicationConfiguration
 ├── infrastructure
 │   ├── persistence    R2dbcPokemonRepository, R2dbcTrainerRepository
 │   └── pokeapi        PokeApiPokemonCatalog, PokeApiCachingConfiguration
 └── web
-    ├── controller     TrainerController, PokemonController
+    ├── controller     TrainerController, PokemonController, AllPokemonController
     ├── dto            Request/response payloads
     ├── error          ProblemHandler (RFC 7807)
     └── openapi        OpenApiConfiguration, ApiProblem
