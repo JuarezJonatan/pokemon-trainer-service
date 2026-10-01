@@ -266,6 +266,43 @@ class PokemonStorageApiIT {
 	}
 
 	@Test
+	void givenRegisteredTrainers_whenListingThemInPagesOfOne_thenEachPageHoldsOneTrainerAndTheTotalCountsAll() {
+		http.post().uri("/api/v1/trainers").bodyValue(Map.of("name", "Misty")).exchange().expectStatus().isCreated();
+
+		http.get().uri("/api/v1/trainers?page=0&size=1").exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("$.trainers.length()").isEqualTo(1)
+				.jsonPath("$.trainers[0].id").isNotEmpty()
+				.jsonPath("$.size").isEqualTo(1)
+				.jsonPath("$.totalElements").value(total -> assertThat(((Number) total).longValue()).isGreaterThanOrEqualTo(2))
+				.jsonPath("$.totalPages").value(pages -> assertThat(((Number) pages).longValue()).isGreaterThanOrEqualTo(2));
+	}
+
+	@Test
+	void givenACapturedPokemon_whenListingAllPokemon_thenTheLastPageEndsWithItAndCarriesItsOwnerAndStorage() {
+		Map<String, Object> pikachu = capture(pikachu());
+		long total = ((Number) http.get().uri("/api/v1/pokemon?size=1").exchange()
+				.expectStatus().isOk()
+				.expectBody(Map.class).returnResult().getResponseBody().get("totalElements")).longValue();
+
+		http.get().uri("/api/v1/pokemon?page={page}&size=1", total - 1).exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("$.pokemon[0].id").isEqualTo(pikachu.get("id"))
+				.jsonPath("$.pokemon[0].trainerId").isEqualTo(trainer)
+				.jsonPath("$.pokemon[0].storage.area").isEqualTo("TEAM");
+	}
+
+	@Test
+	void givenAPageSizeAboveTheLimit_whenListingTrainersOrPokemon_thenABadRequestProblemIsReturned() {
+		http.get().uri("/api/v1/trainers?size=101").exchange()
+				.expectStatus().isBadRequest().expectBody().jsonPath("$.code").isEqualTo("invalid-value");
+		http.get().uri("/api/v1/pokemon?page=-1").exchange()
+				.expectStatus().isBadRequest().expectBody().jsonPath("$.code").isEqualTo("invalid-value");
+	}
+
+	@Test
 	void givenTwentyConcurrentCaptures_whenTheyRace_thenStorageNeverExceedsItsCapacity() {
 		List<HttpStatusCode> results = Flux.range(0, 20)
 				.parallel(20)

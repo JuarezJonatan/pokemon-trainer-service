@@ -123,6 +123,22 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
+	@Override
+	public Flux<PokemonSpecimen> findAll(int offset, int limit) {
+		return database.sql("select " + COLUMNS + " from pokemon order by created_at, id offset :offset limit :limit")
+				.bind("offset", offset)
+				.bind("limit", limit)
+				.map(R2dbcPokemonRepository::toPokemon)
+				.all();
+	}
+
+	@Override
+	public Mono<Long> count() {
+		return database.sql("select count(*) as total from pokemon")
+				.map(row -> row.get("total", Long.class))
+				.one();
+	}
+
 	private Mono<PokemonSpecimen> execute(String sql, PokemonSpecimen pokemon) {
 		return bind(database.sql(sql), pokemon)
 				.fetch()

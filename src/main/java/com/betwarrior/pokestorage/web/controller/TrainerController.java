@@ -8,13 +8,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.betwarrior.pokestorage.application.usecase.trainer.FindTrainer;
+import com.betwarrior.pokestorage.application.usecase.trainer.ListTrainers;
 import com.betwarrior.pokestorage.application.usecase.trainer.RegisterTrainer;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 import com.betwarrior.pokestorage.web.dto.TrainerPayloads.RegisterTrainerRequest;
+import com.betwarrior.pokestorage.web.dto.TrainerPayloads.TrainerPageResponse;
 import com.betwarrior.pokestorage.web.dto.TrainerPayloads.TrainerResponse;
 import com.betwarrior.pokestorage.web.openapi.OpenApiConfiguration;
 
@@ -36,6 +39,7 @@ public class TrainerController {
 
 	private final RegisterTrainer registerTrainer;
 	private final FindTrainer findTrainer;
+	private final ListTrainers listTrainers;
 
 	@Operation(summary = "Register a trainer",
 			description = "Creates a trainer with an empty team and box. Its id is the one every other endpoint expects.")
@@ -60,6 +64,18 @@ public class TrainerController {
 	public Mono<TrainerResponse> find(
 			@Parameter(description = "Trainer id", example = "5f0c2a4e-3b8e-4c1e-9d5a-1b2c3d4e5f60") @PathVariable UUID trainerId) {
 		return findTrainer.find(new TrainerId(trainerId)).map(TrainerResponse::from);
+	}
+
+	@Operation(summary = "List all trainers", description = "Paginated list of every registered trainer, in registration order.")
+	@ApiResponse(responseCode = "200", description = "A page of trainers")
+	@ApiResponse(responseCode = "400", ref = OpenApiConfiguration.BAD_REQUEST)
+	@GetMapping
+	public Mono<TrainerPageResponse> list(
+			@Parameter(description = "Zero-based page number", schema = @Schema(minimum = "0", defaultValue = "0"))
+			@RequestParam(defaultValue = "0") int page,
+			@Parameter(description = "Page size", schema = @Schema(minimum = "1", maximum = "100", defaultValue = "20"))
+			@RequestParam(defaultValue = "20") int size) {
+		return listTrainers.list(page, size).map(TrainerPageResponse::from);
 	}
 
 }

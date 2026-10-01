@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +22,8 @@ import reactor.core.publisher.Mono;
 public class InMemoryPokemonRepository implements PokemonRepository {
 
 	private final Map<PokemonId, PokemonSpecimen> pokemon = new ConcurrentHashMap<>();
+	private final Map<PokemonId, Long> storageOrder = new ConcurrentHashMap<>();
+	private final AtomicLong sequence = new AtomicLong();
 	private final AtomicInteger slotConflictsToSimulate = new AtomicInteger();
 
 	public void simulateConcurrentSlotConflicts(int times) {
@@ -36,6 +39,7 @@ public class InMemoryPokemonRepository implements PokemonRepository {
 		return Mono.fromCallable(() -> {
 			rejectTakenSlot(specimen);
 			pokemon.put(specimen.id(), specimen);
+			storageOrder.putIfAbsent(specimen.id(), sequence.incrementAndGet());
 			return specimen;
 		});
 	}
@@ -74,6 +78,21 @@ public class InMemoryPokemonRepository implements PokemonRepository {
 	public Mono<Map<PokemonId, StorageSlot>> occupiedSlots(TrainerId owner) {
 		return Mono.fromSupplier(() -> ownedBy(owner)
 				.collect(Collectors.toMap(PokemonSpecimen::id, PokemonSpecimen::slot)));
+	}
+
+	@Override
+	public Flux<PokemonSpecimen> findAll(int offset, int limit) {
+		return Flux.fromStream(() -> pokemon.values().stream()
+				.sorted(Comparator.comparingLong(specimen -> storageOrder.get(specimen.id())))
+				.skip(offset)
+				.limit(limit)
+				.toList()
+				.stream());
+	}
+
+	@Override
+	public Mono<Long> count() {
+		return Mono.fromSupplier(() -> (long) pokemon.size());
 	}
 
 	private Stream<PokemonSpecimen> ownedBy(TrainerId owner) {

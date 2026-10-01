@@ -105,6 +105,33 @@ class R2dbcPokemonRepositoryIT {
 	}
 
 	@Test
+	void givenPokemonOfTwoTrainers_whenListingAll_thenEveryOneIsPagedInTheOrderTheyWereStored() {
+		TrainerId misty = TrainerId.random();
+		trainers.save(new Trainer(misty, "Misty")).block();
+		PokemonSpecimen first = repository.insert(specimenOf(pikachu(), "static", StorageSlot.team(1))).block();
+		PokemonSpecimen second = repository.insert(ownedBy(specimenOf(magikarp(), "swift-swim", StorageSlot.box(1)), misty)).block();
+		PokemonSpecimen third = repository.insert(specimenOf(pikachu(), "static", StorageSlot.box(1))).block();
+
+		var firstPage = repository.findAll(0, 2).collectList().block();
+		var secondPage = repository.findAll(2, 2).collectList().block();
+
+		assertThat(firstPage).containsExactly(first, second);
+		assertThat(secondPage).containsExactly(third);
+		assertThat(repository.count().block()).isEqualTo(3);
+	}
+
+	@Test
+	void givenThreeTrainers_whenListingThem_thenTheyArePagedInRegistrationOrder() {
+		Trainer misty = trainers.save(new Trainer(TrainerId.random(), "Misty")).block();
+		Trainer brock = trainers.save(new Trainer(TrainerId.random(), "Brock")).block();
+
+		var secondPage = trainers.findAll(1, 2).collectList().block();
+
+		assertThat(secondPage).containsExactly(misty, brock);
+		assertThat(trainers.count().block()).isEqualTo(3);
+	}
+
+	@Test
 	void givenAnEvolvedPokemon_whenUpdatingIt_thenTheNewSpeciesAndAbilityArePersisted() {
 		PokemonSpecimen magikarp = specimenOf(magikarp(), "swift-swim", StorageSlot.team(2));
 		repository.insert(magikarp).block();

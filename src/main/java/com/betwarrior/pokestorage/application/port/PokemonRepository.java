@@ -29,4 +29,11 @@ public interface PokemonRepository {
 
 	Mono<Map<PokemonId, StorageSlot>> occupiedSlots(TrainerId owner);
 
+	/**
+	 * Every trainer's Pokemon, in the order they were stored.
+	 */
+	Flux<PokemonSpecimen> findAll(int offset, int limit);
+
+	Mono<Long> count();
+
 }
