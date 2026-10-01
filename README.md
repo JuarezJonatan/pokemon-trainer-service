@@ -62,7 +62,7 @@ Flyway creates the schema on startup. Configuration lives in [`application.yml`]
 
 ## API
 
-Base path: `/api/v1`. All errors follow **RFC 7807** (`application/problem+json`) and include a stable `code`, so clients don't need to parse messages.
+Base path: `/api/v1`. All errors follow **RFC 7807** (`application/problem+json`) and include a stable `code`, so clients don't need to parse messages. This includes the errors Spring raises before a request reaches a controller: they get `malformed-request` (400) or the HTTP status name, e.g. `method-not-allowed`.
 
 The full contract is published as **OpenAPI 3.1** and browsable in **Swagger UI** (`/swagger-ui.html`): every endpoint documents its request fields (with limits and examples), its responses and each error it can return, with an example per `code`. The document is built from annotations on the controllers and payloads, plus [`OpenApiConfiguration`](src/main/java/com/betwarrior/pokestorage/web/openapi/OpenApiConfiguration.java), which holds the API metadata and the reusable error responses.
 
@@ -84,11 +84,11 @@ The full contract is published as **OpenAPI 3.1** and browsable in **Swagger UI*
 | HTTP | `code` | When |
 |---|---|---|
 | 400 | `invalid-value` | An invariant is broken: IV outside 0–31, EV > 252 or total > 510, more than 4 moves, level outside 1–100, page < 0 or size outside 1–100, etc. |
-| 400 | *(Spring)* | Malformed JSON, missing required field, invalid enum or UUID |
+| 400 | `malformed-request` | Malformed JSON, missing or blank required field, invalid enum, UUID or number. `violations` names each culprit, e.g. `nature: invalid value 'BRAVEST' (allowed: [...])` or `species: must not be blank` |
 | 404 | `not-found` | Trainer or specimen doesn't exist (or belongs to another trainer) |
-| 409 | `storage-full` | Team or box is full (`area` says which) |
+| 409 | `storage-full` | On a transfer, the destination is full and `area` says which. On a capture, both team and box are full, so there is no `area` |
 | 409 | `pokemon-not-in-team` | Trying to evolve a Pokémon that is in the box |
-| 409 | `concurrent-modification` | Extreme contention on the same slot; safe to retry |
+| 409 | `concurrent-modification` | The Pokémon or the storage kept changing concurrently, even after retrying; safe to retry |
 | 422 | `species-rule-violation` | Ability, move or gender incompatible with the species. Includes `violations` with **all** the infractions |
 | 422 | `unknown-pokeapi-entry` | Species or item doesn't exist in PokéAPI |
 | 422 | `invalid-item` | The given Poké Ball is not a Poké Ball |
@@ -194,7 +194,7 @@ com.betwarrior.pokestorage
 │   ├── usecase
 │   │   ├── trainer    RegisterTrainer, FindTrainer, ListTrainers
 │   │   ├── pokemon    CapturePokemon, FindPokemon, EvolvePokemon, ListAllPokemon
-│   │   └── storage    ListTeam, ListBox, TransferPokemon, SlotRetry
+│   │   └── storage    ListTeam, ListBox, TransferPokemon, ConcurrentUpdateRetry
 │   ├── port           PokemonRepository, TrainerRepository, PokemonCatalog
 │   ├── pagination     PageRequest (validates page and size), Page<T>
 │   ├── exception      ApplicationException and its subclasses
@@ -271,11 +271,15 @@ sequenceDiagram
 
 ## Persistence
 
-PostgreSQL 16 with **reactive (R2DBC)** access, consistent with WebFlux and with the library. The schema is versioned with **Flyway** in [`V1__create_trainer_storage.sql`](src/main/resources/db/migration/V1__create_trainer_storage.sql).
+PostgreSQL 16 with **reactive (R2DBC)** access, consistent with WebFlux and with the library. The schema is versioned with **Flyway** in [`db/migration`](src/main/resources/db/migration).
 
 - Two tables: `trainer` and `pokemon`. The specimen's attributes are **flat columns** (`iv_hp`, `ev_speed`, `nature`, …), queryable and indexable. Moves are stored in a `varchar[]`.
 - **The database also protects the invariants** with `CHECK` constraints (IV/EV ranges, EV total ≤ 510, 1–4 moves, level 1–100), in case someone writes outside the app.
-- **Concurrency:** `UNIQUE (trainer_id, storage_area, storage_slot)`. If two simultaneous captures pick the same free slot, the database rejects one; the application retries it after re-reading the storage. Since the domain only assigns slots between 1 and the capacity, **the limit is never exceeded**. An integration test fires 20 concurrent captures against a limit of 8.
+- **Concurrency** is handled with two optimistic mechanisms, and nothing is locked:
+  - **Slots:** `UNIQUE (trainer_id, storage_area, storage_slot)`. If two simultaneous captures or transfers pick the same free slot, the database rejects one. Since the domain only assigns slots between 1 and the capacity, **the limit is never exceeded**.
+  - **Lost updates:** each Pokémon has a `version` (`V2__add_pokemon_version.sql`). An update only applies `where version = :read` and increments it. Without it, an evolution and a deposit of the same Pokémon at once both answered 200, but the last write silently undid the evolution.
+  - **Retry:** both conflicts are retried from a fresh read (`ConcurrentUpdateRetry`), with a jittered backoff and up to as many attempts as there are slots. Every lost race means another operation committed a slot this one hadn't seen, so every capture that fits gets in. An evolution retried after a deposit is rejected with `pokemon-not-in-team`; a deposit retried after an evolution moves the evolved Pokémon.
+  - Integration tests fire as many concurrent captures as free slots (all succeed), 20 captures against 8 slots (never more than 8), and an evolution and a deposit of the same Pokémon at once (no accepted change is lost).
 - Repositories use `DatabaseClient` with explicit SQL, without Spring Data: the mapping is visible and there is no magic.
 
 ## PokéAPI client
@@ -345,7 +349,7 @@ Outside Spring Boot, `PokeApiAutoConfiguration.createClient(WebClient.builder(),
 | Single module with layers + ArchUnit | Maven multi-module; JPMS | Less ceremony. ArchUnit gives a guarantee similar to separate modules |
 | WebFlux + R2DBC | Spring MVC + JPA | The library is reactive; mixing blocking and reactive models adds complexity and the risk of blocking the event loop |
 | Flat columns | JSONB with all the genetics | Invariants are also enforced in the database (`CHECK`) and the data is queryable. JSONB is more flexible but opaque |
-| Unique constraint for concurrency | Optimistic lock (`version`) on the trainer; `SELECT … FOR UPDATE` | No extra state and no long-held locks; conflicts only happen when there is an actual race |
+| Unique constraint for slots + optimistic lock (`version`) per Pokémon | Optimistic lock on the whole trainer; `SELECT … FOR UPDATE` | No long-held locks, and conflicts only happen on an actual race. A version per Pokémon lets operations on different Pokémon of the same trainer run in parallel; the unique constraint protects the capacity |
 | Fixed slots (no compaction) | Reorder the team when a Pokémon leaves | The bonus requires preserving the "exact slot" |
 | Validate evolution with `evolves_from_species` | Walk the `EvolutionChain` | Simpler: 1 resource per species, already cached by the capture. (The inherited library couldn't even request `EvolutionChain`; the new client can) |
 | Team composition in the backend | Let the client call PokéAPI | The statement asks for a composite view; it also centralizes caching and resilience |

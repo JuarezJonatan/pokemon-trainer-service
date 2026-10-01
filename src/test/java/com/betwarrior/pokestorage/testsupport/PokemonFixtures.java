@@ -89,19 +89,19 @@ public final class PokemonFixtures {
 				ability, Gender.FEMALE, true,
 				new CaptureOrigin(ASH.toString(), "ultra-ball", Instant.parse("2026-09-01T10:00:00Z"), new Level(5),
 						"viridian-forest"),
-				new MoveSet(List.of("tackle")), Optional.of("light-ball"), slot);
+				new MoveSet(List.of("tackle")), Optional.of("light-ball"), slot, PokemonSpecimen.FIRST_VERSION);
 	}
 
 	public static PokemonSpecimen withoutNicknameNorItem(PokemonSpecimen p) {
 		return new PokemonSpecimen(p.id(), p.owner(), p.species(), Optional.empty(), p.level(), p.individualValues(),
 				p.effortValues(), p.nature(), p.ability(), p.gender(), p.shiny(), p.origin(), p.moves(), Optional.empty(),
-				p.slot());
+				p.slot(), p.version());
 	}
 
 	public static PokemonSpecimen ownedBy(PokemonSpecimen p, TrainerId owner) {
 		return new PokemonSpecimen(p.id(), owner, p.species(), p.nickname(), p.level(), p.individualValues(),
 				p.effortValues(), p.nature(), p.ability(), p.gender(), p.shiny(), p.origin(), p.moves(), p.heldItem(),
-				p.slot());
+				p.slot(), p.version());
 	}
 
 }

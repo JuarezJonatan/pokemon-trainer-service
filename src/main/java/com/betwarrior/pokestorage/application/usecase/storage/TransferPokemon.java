@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * Moves a Pokemon between the active team and the PC box. Moving it to the area it already is in
- * leaves it untouched.
+ * leaves it untouched. If the slot or the Pokemon changes concurrently, the move is retried from a fresh read.
  */
 @Component
 @RequiredArgsConstructor
@@ -41,7 +41,7 @@ public class TransferPokemon {
 					return pokemon.update(current.storedAt(slot));
 				});
 		return transaction.transactional(Mono.defer(() -> move))
-				.retryWhen(SlotRetry.onConcurrentSlotAssignment());
+				.retryWhen(ConcurrentUpdateRetry.boundedBy(storage.capacity()));
 	}
 
 }

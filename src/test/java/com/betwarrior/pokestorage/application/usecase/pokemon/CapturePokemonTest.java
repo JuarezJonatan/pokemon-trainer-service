@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.betwarrior.pokestorage.application.config.StorageProperties;
+import com.betwarrior.pokestorage.application.exception.SlotAlreadyTakenException;
 import com.betwarrior.pokestorage.application.exception.InvalidItemException;
 import com.betwarrior.pokestorage.application.exception.TrainerNotFoundException;
 import com.betwarrior.pokestorage.application.exception.UnknownCatalogEntryException;
@@ -167,6 +168,24 @@ class CapturePokemonTest {
 		PokemonSpecimen captured = capturePokemon.capture(pikachuCapture()).block();
 
 		assertThat(pokemon.stored(captured.id())).isNotNull();
+	}
+
+	@Test
+	void givenAsManyLostRacesAsThereAreSlots_whenCapturing_thenItKeepsRetryingAndSucceeds() {
+		pokemon.simulateConcurrentSlotConflicts(3);
+
+		PokemonSpecimen captured = capturePokemon.capture(pikachuCapture()).block();
+
+		assertThat(pokemon.stored(captured.id())).isNotNull();
+	}
+
+	@Test
+	void givenMoreLostRacesThanSlots_whenCapturing_thenAConcurrentUpdateIsReported() {
+		pokemon.simulateConcurrentSlotConflicts(4);
+
+		StepVerifier.create(capturePokemon.capture(pikachuCapture()))
+				.expectError(SlotAlreadyTakenException.class)
+				.verify();
 	}
 
 	private CapturePokemonCommand pikachuCapture() {
