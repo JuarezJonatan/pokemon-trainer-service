@@ -64,8 +64,6 @@ Replace it with **`com.betwarrior.pokeapi`**, built on the Spring features the p
 - **Cache keys:** entries are keyed by what the caller asked for, so `"25"` and `"pikachu"` are cached separately.
 - **Unmapped fields:** a few PokéAPI fields with deep or undocumented shapes are not mapped (`sprites.other`, `sprites.versions`, `Type.sprites`, newer `EvolutionDetail` conditions). They are ignored, never an error.
 
-## Coexistence and removal
+## Removal of `skaro.pokeapi`
 
-`skaro.pokeapi` stays for one release, with its entry points marked `@Deprecated(since = "2.0", forRemoval = true)` and its original tests still running.
-- ArchUnit forbids both the service and the new client from depending on it.
-- It will be deleted in the next release, together with its tests and fixtures.
+The first plan was to keep `skaro.pokeapi` for one release, deprecated for removal, so that its users could migrate. Nothing depends on it anymore: the service was migrated in the same change, and the library was never published from this repository. Keeping it would only preserve 104 mutable classes with setters, so it was **deleted in the same change**, together with its tests. Its history remains in git.

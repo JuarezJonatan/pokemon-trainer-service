@@ -170,7 +170,6 @@ flowchart LR
 | `infrastructure.pokeapi` | `PokeApiPokemonCatalog`: translates PokéAPI records into the domain | `application`, `domain`, PokéAPI client |
 | `web` | HTTP: controllers, payloads, format validation, error mapping and OpenAPI documentation | `application`, `domain` |
 | `com.betwarrior.pokeapi` | Declarative PokéAPI client and its records | only used by `infrastructure.pokeapi`; it never depends on the service |
-| `skaro.pokeapi` | Inherited library, **deprecated** | nothing (ArchUnit forbids it) |
 
 Inside each layer, classes are grouped by role or concept, so no layer is a flat list of files:
 
@@ -349,7 +348,7 @@ Outside Spring Boot, `PokeApiAutoConfiguration.createClient(WebClient.builder(),
 
 ## Changes and findings in the inherited library
 
-While solving the challenge, the criterion was: **only what the upgrade required or what blocked the feature was modified.** Everything else was documented. The library is now **deprecated**: every finding below is fixed in the new client ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)), and the old code is left as is until it is removed.
+While solving the challenge, the criterion was: **only what the upgrade required or what blocked the feature was modified.** Everything else was documented. The library has since been **replaced and deleted**; every finding below is fixed in the new client ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)). The tables are kept as a record of why.
 
 ### Modified
 
@@ -389,7 +388,7 @@ mvn verify    # + integration with a real Postgres (Testcontainers) and the full
 | Persistence (`*IT`) | Full mapping, slot constraint, pagination | `@DataR2dbcTest` + Testcontainers Postgres |
 | API (`*IT`) | All endpoints, error codes, concurrent captures | `@SpringBootTest` + Testcontainers + PokéAPI stub |
 | API docs (`*IT`) | The OpenAPI document exposes every endpoint, example and error response | `@SpringBootTest` + `/v3/api-docs` |
-| Architecture | Dependencies between layers; the client doesn't know the service; nothing uses `skaro.pokeapi` | ArchUnit |
+| Architecture | Dependencies between layers; the client doesn't know the service | ArchUnit |
 
 Convention: tests follow a **BDD style without Gherkin**. The method name describes the scenario (`givenX_whenY_thenZ`) and phases are separated by blank lines, without comments.
 
@@ -407,7 +406,7 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 
 1. **Spring Boot 4.x**: 3.5 no longer has OSS support. It requires migrating the library to Jackson 3 (see ADR 0001).
 2. **Authentication and authorization** per trainer (OAuth2/JWT): today anyone with the ID can operate on any trainer.
-3. **Remove the deprecated `skaro.pokeapi`** (next release), and extract `com.betwarrior.pokeapi` into its own module or repository with semantic versioning if another service needs it.
+3. **Extract `com.betwarrior.pokeapi`** into its own module or repository with semantic versioning if another service needs it.
 4. **Graceful degradation** of `GET /team` when PokéAPI doesn't respond: return the specimen data with `species: null` and a warning.
 5. **Distributed cache** (Redis) if the service scales horizontally, or a **local PokéAPI replica** (it's open source) to avoid depending on a rate-limited public service.
 6. **Observability:** Micrometer metrics (PokéAPI latency, cache hit ratio, slot conflicts) and tracing.
@@ -429,19 +428,6 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 
 ## The inherited library: pokeapi-reactor
 
-> **Deprecated** in favor of [`com.betwarrior.pokeapi`](#pokéapi-client) and scheduled for removal ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)). Nothing in this service uses it anymore.
-
-A non-blocking, caching PokéAPI client, originally published as a library by [SirSkaro](https://github.com/SirSkaro/pokeapi-reactor) (package `skaro.pokeapi`). It is kept in this repo along with its commit history.
-
-- **Entry point:** [`PokeApiClient`](src/main/java/skaro/pokeapi/client/PokeApiClient.java), with `getResource(Class, nameOrId)`, `followResource(...)` and `followResources(...)`.
-- **Configuration:** import `PokeApiReactorCachingConfiguration` or `PokeApiReactorNonCachingConfiguration` and declare a `reactor.netty.http.client.HttpClient` bean.
-- **Properties:** `skaro.pokeapi.base-uri` (required) and `skaro.pokeapi.max-bytes-to-buffer`.
-
-```java
-pokeApiClient.getResource(Pokemon.class, "pikachu")
-    .flatMapMany(pokemon -> pokeApiClient.followResources(pokemon::getForms, PokemonForm.class))
-    .map(form -> form.getName())
-    .subscribe(System.out::println);
-```
+A non-blocking, caching PokéAPI client, originally published as a library by [SirSkaro](https://github.com/SirSkaro/pokeapi-reactor) (package `skaro.pokeapi`). This project started from it, kept its commit history, and replaced it with [`com.betwarrior.pokeapi`](#pokéapi-client). The old code was then deleted ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)); it can still be browsed in git history.
 
 MIT license (see [LICENSE](LICENSE)).

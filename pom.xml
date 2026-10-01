@@ -181,7 +181,6 @@
 					<excludes>
 						<exclude>**/*Configuration.class</exclude> <!-- Exclude @Configuration classes -->
 						<exclude>**/*Properties.class</exclude> <!-- Exclude properties classes -->
-						<exclude>skaro/pokeapi/resource/**/*</exclude> <!-- Exclude POJOs -->
 					</excludes>
 				</configuration>
 				<executions>

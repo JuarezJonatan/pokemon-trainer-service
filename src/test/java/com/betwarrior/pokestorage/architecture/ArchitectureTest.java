@@ -43,12 +43,6 @@ class ArchitectureTest {
 			.as("the application layer does not know about databases, HTTP or PokeAPI types");
 
 	@ArchTest
-	static final ArchRule theServiceDoesNotUseTheDeprecatedLibrary = noClasses()
-			.that().resideInAnyPackage("com.betwarrior.pokestorage..", "com.betwarrior.pokeapi..")
-			.should().dependOnClassesThat().resideInAPackage("skaro.pokeapi..")
-			.as("neither the service nor the new client depend on the deprecated skaro.pokeapi library");
-
-	@ArchTest
 	static final ArchRule thePokeApiClientDoesNotKnowTheService = noClasses()
 			.that().resideInAPackage("com.betwarrior.pokeapi..")
 			.should().dependOnClassesThat().resideInAPackage("com.betwarrior.pokestorage..")
