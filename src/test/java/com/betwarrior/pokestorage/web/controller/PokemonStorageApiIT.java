@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -318,6 +320,98 @@ class PokemonStorageApiIT {
 				.expectBody().jsonPath("$.members.length()").isEqualTo(6);
 		http.get().uri("/api/v1/trainers/{t}/box", trainer).exchange()
 				.expectBody().jsonPath("$.totalElements").isEqualTo(2);
+	}
+
+	@Test
+	void givenAnEmptyTrainer_whenAsManyCapturesAsFreeSlotsRaceAtOnce_thenEveryOneIsStored() {
+		List<Integer> statuses = concurrently(8, i -> postCapture(pikachu()).returnResult(String.class).getStatus().value());
+
+		assertThat(statuses).containsOnly(201);
+		http.get().uri("/api/v1/trainers/{t}/box", trainer).exchange()
+				.expectBody().jsonPath("$.totalElements").isEqualTo(2);
+	}
+
+	@RepeatedTest(5)
+	void givenAnEvolutionAndADepositOfTheSamePokemonAtOnce_whenBothFinish_thenNoAcceptedChangeIsLost() {
+		Object magikarp = capture(magikarp()).get("id");
+
+		List<Map<String, Object>> results = concurrently(2, i -> {
+			WebTestClient.ResponseSpec response = i == 0 ? evolve(magikarp, "gyarados") : transfer(magikarp, "BOX");
+			return response.expectBody(new ParameterizedTypeReference<Map<String, Object>>() {
+			}).returnResult().getResponseBody();
+		});
+
+		Map<String, Object> stored = http.get().uri("/api/v1/trainers/{t}/pokemon/{p}", trainer, magikarp).exchange()
+				.expectBody(new ParameterizedTypeReference<Map<String, Object>>() {
+				}).returnResult().getResponseBody();
+		Map<String, Object> evolution = results.get(0);
+		Map<String, Object> deposit = results.get(1);
+		assertThat(storage(deposit).get("area")).as("the deposit always succeeds").isEqualTo("BOX");
+		assertThat(storage(stored).get("area")).isEqualTo("BOX");
+		if (evolution.containsKey("species")) {
+			assertThat(species(stored)).as("an accepted evolution is kept").isEqualTo("gyarados");
+		} else {
+			assertThat(evolution.get("code")).isEqualTo("pokemon-not-in-team");
+			assertThat(species(stored)).isEqualTo("magikarp");
+		}
+	}
+
+	@Test
+	void givenAnInvalidEnumAndABlankField_whenCapturing_thenAMalformedRequestProblemNamesBothFields() {
+		Map<String, Object> request = pikachu();
+		request.put("nature", "BRAVEST");
+
+		postCapture(request).expectStatus().isBadRequest()
+				.expectHeader().contentType("application/problem+json")
+				.expectBody()
+				.jsonPath("$.code").isEqualTo("malformed-request")
+				.jsonPath("$.type").isEqualTo("urn:pokestorage:problem:malformed-request")
+				.jsonPath("$.violations[0]").value(violation -> assertThat(violation.toString())
+						.startsWith("nature: invalid value 'BRAVEST'").contains("TIMID"));
+		request.put("nature", "TIMID");
+		request.put("species", " ");
+		postCapture(request).expectStatus().isBadRequest()
+				.expectBody()
+				.jsonPath("$.code").isEqualTo("malformed-request")
+				.jsonPath("$.violations[0]").isEqualTo("species: must not be blank");
+	}
+
+	@Test
+	void givenAMalformedPathOrQueryOrBody_whenCallingTheApi_thenEveryBadRequestCarriesACodeAndTheCulprit() {
+		http.get().uri("/api/v1/trainers/not-a-uuid").exchange()
+				.expectStatus().isBadRequest().expectBody()
+				.jsonPath("$.code").isEqualTo("malformed-request")
+				.jsonPath("$.violations[0]").value(violation -> assertThat(violation.toString()).startsWith("trainerId:"));
+		http.get().uri("/api/v1/trainers?page=abc").exchange()
+				.expectStatus().isBadRequest().expectBody()
+				.jsonPath("$.violations[0]").value(violation -> assertThat(violation.toString()).startsWith("page:"));
+		http.post().uri("/api/v1/trainers").header("Content-Type", "application/json").bodyValue("{\"name\":").exchange()
+				.expectStatus().isBadRequest().expectBody()
+				.jsonPath("$.code").isEqualTo("malformed-request")
+				.jsonPath("$.violations[0]").isEqualTo("body: malformed JSON");
+		http.delete().uri("/api/v1/trainers").exchange()
+				.expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED).expectBody()
+				.jsonPath("$.code").isEqualTo("method-not-allowed");
+	}
+
+	/**
+	 * Sends the requests at once and returns their results in request order.
+	 */
+	private <T> List<T> concurrently(int requests, IntFunction<T> request) {
+		return Flux.range(0, requests)
+				.parallel(requests)
+				.runOn(Schedulers.boundedElastic())
+				.map(i -> Map.entry(i, request.apply(i)))
+				.sequential()
+				.sort(Map.Entry.comparingByKey())
+				.map(Map.Entry::getValue)
+				.collectList()
+				.block();
+	}
+
+	@SuppressWarnings("unchecked")
+	private static String species(Map<String, Object> pokemon) {
+		return ((Map<String, Object>) pokemon.get("species")).get("name").toString();
 	}
 
 	private Map<String, Object> capture(Map<String, Object> request) {

@@ -13,6 +13,7 @@ import org.springframework.r2dbc.core.DatabaseClient.GenericExecuteSpec;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 
+import com.betwarrior.pokestorage.application.exception.PokemonChangedConcurrentlyException;
 import com.betwarrior.pokestorage.application.exception.SlotAlreadyTakenException;
 import com.betwarrior.pokestorage.application.port.PokemonRepository;
 import com.betwarrior.pokestorage.domain.pokemon.CaptureOrigin;
@@ -47,7 +48,7 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 			ev_hp, ev_attack, ev_defense, ev_special_attack, ev_special_defense, ev_speed,
 			nature, ability, gender, shiny,
 			original_trainer_id, pokeball, caught_at, met_level, met_location,
-			moves, held_item, storage_area, storage_slot""";
+			moves, held_item, storage_area, storage_slot, version""";
 
 	private static final String INSERT = "insert into pokemon (" + COLUMNS + """
 			) values (
@@ -56,7 +57,7 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 			:ev_hp, :ev_attack, :ev_defense, :ev_special_attack, :ev_special_defense, :ev_speed,
 			:nature, :ability, :gender, :shiny,
 			:original_trainer_id, :pokeball, :caught_at, :met_level, :met_location,
-			:moves, :held_item, :storage_area, :storage_slot)""";
+			:moves, :held_item, :storage_area, :storage_slot, :version)""";
 
 	private static final String UPDATE = """
 			update pokemon set
@@ -68,19 +69,23 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 			nature = :nature, ability = :ability, gender = :gender, shiny = :shiny,
 			original_trainer_id = :original_trainer_id, pokeball = :pokeball, caught_at = :caught_at,
 			met_level = :met_level, met_location = :met_location, moves = :moves, held_item = :held_item,
-			storage_area = :storage_area, storage_slot = :storage_slot, updated_at = now()
-			where id = :id and trainer_id = :trainer_id""";
+			storage_area = :storage_area, storage_slot = :storage_slot,
+			version = version + 1, updated_at = now()
+			where id = :id and trainer_id = :trainer_id and version = :version""";
 
 	private final DatabaseClient database;
 
 	@Override
 	public Mono<PokemonSpecimen> insert(PokemonSpecimen pokemon) {
-		return execute(INSERT, pokemon);
+		return execute(INSERT, pokemon).thenReturn(pokemon);
 	}
 
 	@Override
 	public Mono<PokemonSpecimen> update(PokemonSpecimen pokemon) {
-		return execute(UPDATE, pokemon);
+		return execute(UPDATE, pokemon)
+				.filter(updated -> updated > 0)
+				.switchIfEmpty(Mono.error(() -> new PokemonChangedConcurrentlyException(pokemon.id())))
+				.thenReturn(pokemon.withVersion(pokemon.version() + 1));
 	}
 
 	@Override
@@ -139,11 +144,10 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 				.one();
 	}
 
-	private Mono<PokemonSpecimen> execute(String sql, PokemonSpecimen pokemon) {
+	private Mono<Long> execute(String sql, PokemonSpecimen pokemon) {
 		return bind(database.sql(sql), pokemon)
 				.fetch()
 				.rowsUpdated()
-				.thenReturn(pokemon)
 				.onErrorMap(R2dbcPokemonRepository::isSlotConflict, SlotAlreadyTakenException::new);
 	}
 
@@ -185,7 +189,8 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 				.bind("met_location", origin.metLocation())
 				.bind("moves", pokemon.moves().moves().toArray(String[]::new))
 				.bind("storage_area", pokemon.slot().area().name())
-				.bind("storage_slot", (short) pokemon.slot().position());
+				.bind("storage_slot", (short) pokemon.slot().position())
+				.bind("version", pokemon.version());
 	}
 
 	private static GenericExecuteSpec bindNullable(GenericExecuteSpec spec, String name, Optional<String> value) {
@@ -213,7 +218,8 @@ public class R2dbcPokemonRepository implements PokemonRepository {
 						row.get("met_location", String.class)),
 				new MoveSet(List.of(row.get("moves", String[].class))),
 				Optional.ofNullable(row.get("held_item", String.class)),
-				slotOf(row));
+				slotOf(row),
+				row.get("version", Long.class));
 	}
 
 	private static StorageSlot slotOf(Readable row) {

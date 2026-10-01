@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.r2dbc.core.DatabaseClient;
 
+import com.betwarrior.pokestorage.application.exception.PokemonChangedConcurrentlyException;
 import com.betwarrior.pokestorage.application.exception.SlotAlreadyTakenException;
 import com.betwarrior.pokestorage.domain.pokemon.PokemonId;
 import com.betwarrior.pokestorage.domain.pokemon.PokemonSpecimen;
@@ -137,9 +138,21 @@ class R2dbcPokemonRepositoryIT {
 		repository.insert(magikarp).block();
 		PokemonSpecimen gyarados = magikarp.evolveInto(magikarp(), gyarados(), Optional.empty());
 
-		repository.update(gyarados).block();
+		PokemonSpecimen stored = repository.update(gyarados).block();
 
-		assertThat(repository.findByOwner(PokemonFixtures.ASH, magikarp.id()).block()).isEqualTo(gyarados);
+		assertThat(stored).isEqualTo(gyarados.withVersion(1));
+		assertThat(repository.findByOwner(PokemonFixtures.ASH, magikarp.id()).block()).isEqualTo(stored);
+	}
+
+	@Test
+	void givenAPokemonChangedAfterItWasRead_whenUpdatingTheStaleCopy_thenTheUpdateIsRejectedAndTheChangeKept() {
+		PokemonSpecimen magikarp = repository.insert(specimenOf(magikarp(), "swift-swim", StorageSlot.team(1))).block();
+		PokemonSpecimen deposited = repository.update(magikarp.storedAt(StorageSlot.box(1))).block();
+
+		StepVerifier.create(repository.update(magikarp.evolveInto(magikarp(), gyarados(), Optional.empty())))
+				.expectError(PokemonChangedConcurrentlyException.class)
+				.verify();
+		assertThat(repository.findByOwner(PokemonFixtures.ASH, magikarp.id()).block()).isEqualTo(deposited);
 	}
 
 }
