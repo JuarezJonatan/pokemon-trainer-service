@@ -1,0 +1,41 @@
+{
+  "id": 1,
+  "name": "female",
+  "pokemon_species_details": [
+    {
+      "rate": 1,
+      "pokemon_species": {
+        "name": "bulbasaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/1/"
+      }
+    },
+    {
+      "rate": 1,
+      "pokemon_species": {
+        "name": "ivysaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/2/"
+      }
+    },
+    {
+      "rate": 1,
+      "pokemon_species": {
+        "name": "venusaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/3/"
+      }
+    }
+  ],
+  "required_for_evolution": [
+    {
+      "name": "wormadam",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/413/"
+    },
+    {
+      "name": "vespiquen",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/416/"
+    },
+    {
+      "name": "froslass",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/478/"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 1,
+  "name": "status",
+  "descriptions": [
+    {
+      "description": "ダメージなし",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "description": "沒有傷害",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    },
+    {
+      "description": "Aucun dégât",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    }
+  ],
+  "moves": [
+    {
+      "name": "swords-dance",
+      "url": "https://pokeapi.co/api/v2/move/14/"
+    },
+    {
+      "name": "whirlwind",
+      "url": "https://pokeapi.co/api/v2/move/18/"
+    },
+    {
+      "name": "sand-attack",
+      "url": "https://pokeapi.co/api/v2/move/28/"
+    }
+  ],
+  "names": [
+    {
+      "name": "へんか",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "變化",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    },
+    {
+      "name": "statut",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    }
+  ]
+}

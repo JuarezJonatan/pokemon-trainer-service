@@ -1,0 +1,54 @@
+{
+  "id": 1,
+  "name": "spicy",
+  "berries": [
+    {
+      "potency": 10,
+      "berry": {
+        "name": "cheri",
+        "url": "https://pokeapi.co/api/v2/berry/1/"
+      }
+    },
+    {
+      "potency": 10,
+      "berry": {
+        "name": "leppa",
+        "url": "https://pokeapi.co/api/v2/berry/6/"
+      }
+    },
+    {
+      "potency": 10,
+      "berry": {
+        "name": "oran",
+        "url": "https://pokeapi.co/api/v2/berry/7/"
+      }
+    }
+  ],
+  "contest_type": {
+    "name": "cool",
+    "url": "https://pokeapi.co/api/v2/contest-type/1/"
+  },
+  "names": [
+    {
+      "name": "からい",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "辣",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    },
+    {
+      "name": "Épicé",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    }
+  ]
+}

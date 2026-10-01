@@ -1,0 +1,73 @@
+{
+  "id": 1,
+  "name": "hardy",
+  "decreased_stat": null,
+  "increased_stat": null,
+  "likes_flavor": null,
+  "hates_flavor": null,
+  "pokeathlon_stat_changes": [
+    {
+      "max_change": -1,
+      "pokeathlon_stat": {
+        "name": "speed",
+        "url": "https://pokeapi.co/api/v2/pokeathlon-stat/1/"
+      }
+    },
+    {
+      "max_change": 1,
+      "pokeathlon_stat": {
+        "name": "power",
+        "url": "https://pokeapi.co/api/v2/pokeathlon-stat/2/"
+      }
+    }
+  ],
+  "move_battle_style_preferences": [
+    {
+      "low_hp_preference": 61,
+      "high_hp_preference": 61,
+      "move_battle_style": {
+        "name": "attack",
+        "url": "https://pokeapi.co/api/v2/move-battle-style/1/"
+      }
+    },
+    {
+      "low_hp_preference": 7,
+      "high_hp_preference": 7,
+      "move_battle_style": {
+        "name": "defense",
+        "url": "https://pokeapi.co/api/v2/move-battle-style/2/"
+      }
+    },
+    {
+      "low_hp_preference": 32,
+      "high_hp_preference": 32,
+      "move_battle_style": {
+        "name": "support",
+        "url": "https://pokeapi.co/api/v2/move-battle-style/3/"
+      }
+    }
+  ],
+  "names": [
+    {
+      "name": "がんばりや",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "노력",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "name": "勤奮",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ]
+}

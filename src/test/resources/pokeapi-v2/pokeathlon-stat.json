@@ -1,0 +1,75 @@
+{
+  "id": 1,
+  "name": "speed",
+  "affecting_natures": {
+    "increase": [
+      {
+        "max_change": 2,
+        "nature": {
+          "name": "timid",
+          "url": "https://pokeapi.co/api/v2/nature/5/"
+        }
+      },
+      {
+        "max_change": 2,
+        "nature": {
+          "name": "lonely",
+          "url": "https://pokeapi.co/api/v2/nature/6/"
+        }
+      },
+      {
+        "max_change": 2,
+        "nature": {
+          "name": "gentle",
+          "url": "https://pokeapi.co/api/v2/nature/9/"
+        }
+      }
+    ],
+    "decrease": [
+      {
+        "max_change": -1,
+        "nature": {
+          "name": "hardy",
+          "url": "https://pokeapi.co/api/v2/nature/1/"
+        }
+      },
+      {
+        "max_change": -2,
+        "nature": {
+          "name": "bold",
+          "url": "https://pokeapi.co/api/v2/nature/2/"
+        }
+      },
+      {
+        "max_change": -2,
+        "nature": {
+          "name": "modest",
+          "url": "https://pokeapi.co/api/v2/nature/3/"
+        }
+      }
+    ]
+  },
+  "names": [
+    {
+      "name": "スピード",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "速度",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    },
+    {
+      "name": "Vitesse",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    }
+  ]
+}

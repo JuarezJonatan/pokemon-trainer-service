@@ -1,0 +1,189 @@
+{
+  "id": 25,
+  "name": "pikachu",
+  "order": 26,
+  "gender_rate": 4,
+  "capture_rate": 190,
+  "base_happiness": 70,
+  "is_baby": false,
+  "is_legendary": false,
+  "is_mythical": false,
+  "hatch_counter": 10,
+  "has_gender_differences": true,
+  "forms_switchable": false,
+  "growth_rate": {
+    "name": "medium",
+    "url": "https://pokeapi.co/api/v2/growth-rate/2/"
+  },
+  "pokedex_numbers": [
+    {
+      "entry_number": 25,
+      "pokedex": {
+        "name": "national",
+        "url": "https://pokeapi.co/api/v2/pokedex/1/"
+      }
+    },
+    {
+      "entry_number": 25,
+      "pokedex": {
+        "name": "kanto",
+        "url": "https://pokeapi.co/api/v2/pokedex/2/"
+      }
+    },
+    {
+      "entry_number": 22,
+      "pokedex": {
+        "name": "original-johto",
+        "url": "https://pokeapi.co/api/v2/pokedex/3/"
+      }
+    }
+  ],
+  "egg_groups": [
+    {
+      "name": "ground",
+      "url": "https://pokeapi.co/api/v2/egg-group/5/"
+    },
+    {
+      "name": "fairy",
+      "url": "https://pokeapi.co/api/v2/egg-group/6/"
+    }
+  ],
+  "color": {
+    "name": "yellow",
+    "url": "https://pokeapi.co/api/v2/pokemon-color/10/"
+  },
+  "shape": {
+    "name": "quadruped",
+    "url": "https://pokeapi.co/api/v2/pokemon-shape/8/"
+  },
+  "evolves_from_species": {
+    "name": "pichu",
+    "url": "https://pokeapi.co/api/v2/pokemon-species/172/"
+  },
+  "evolution_chain": {
+    "url": "https://pokeapi.co/api/v2/evolution-chain/10/"
+  },
+  "habitat": {
+    "name": "forest",
+    "url": "https://pokeapi.co/api/v2/pokemon-habitat/2/"
+  },
+  "generation": {
+    "name": "generation-i",
+    "url": "https://pokeapi.co/api/v2/generation/1/"
+  },
+  "names": [
+    {
+      "name": "ピカチュウ",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "Pikachu",
+      "language": {
+        "name": "ja-roma",
+        "url": "https://pokeapi.co/api/v2/language/2/"
+      }
+    },
+    {
+      "name": "피카츄",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    }
+  ],
+  "pal_park_encounters": [
+    {
+      "base_score": 80,
+      "rate": 10,
+      "area": {
+        "name": "forest",
+        "url": "https://pokeapi.co/api/v2/pal-park-area/1/"
+      }
+    }
+  ],
+  "form_descriptions": [],
+  "flavor_text_entries": [
+    {
+      "flavor_text": "When several of\nthese POKéMON\ngather, their\felectricity could\nbuild and cause\nlightning storms.",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      },
+      "version": {
+        "name": "red",
+        "url": "https://pokeapi.co/api/v2/version/1/"
+      }
+    },
+    {
+      "flavor_text": "When several of\nthese POKéMON\ngather, their\felectricity could\nbuild and cause\nlightning storms.",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      },
+      "version": {
+        "name": "blue",
+        "url": "https://pokeapi.co/api/v2/version/2/"
+      }
+    },
+    {
+      "flavor_text": "It keeps its tail\nraised to monitor\nits surroundings.\fIf you yank its\ntail, it will try\nto bite you.",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      },
+      "version": {
+        "name": "yellow",
+        "url": "https://pokeapi.co/api/v2/version/3/"
+      }
+    }
+  ],
+  "genera": [
+    {
+      "genus": "ねずみポケモン",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "genus": "쥐포켓몬",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "genus": "鼠寶可夢",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ],
+  "varieties": [
+    {
+      "is_default": true,
+      "pokemon": {
+        "name": "pikachu",
+        "url": "https://pokeapi.co/api/v2/pokemon/25/"
+      }
+    },
+    {
+      "is_default": false,
+      "pokemon": {
+        "name": "pikachu-rock-star",
+        "url": "https://pokeapi.co/api/v2/pokemon/10080/"
+      }
+    },
+    {
+      "is_default": false,
+      "pokemon": {
+        "name": "pikachu-belle",
+        "url": "https://pokeapi.co/api/v2/pokemon/10081/"
+      }
+    }
+  ]
+}

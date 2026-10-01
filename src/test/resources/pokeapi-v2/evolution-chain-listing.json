@@ -1,0 +1,13 @@
+{
+  "count": 540,
+  "next": "https://pokeapi.co/api/v2/evolution-chain?offset=2&limit=2",
+  "previous": null,
+  "results": [
+    {
+      "url": "https://pokeapi.co/api/v2/evolution-chain/1/"
+    },
+    {
+      "url": "https://pokeapi.co/api/v2/evolution-chain/2/"
+    }
+  ]
+}

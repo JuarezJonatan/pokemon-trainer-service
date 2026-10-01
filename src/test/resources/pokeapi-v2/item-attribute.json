@@ -1,0 +1,50 @@
+{
+  "id": 1,
+  "name": "countable",
+  "descriptions": [
+    {
+      "description": "Est comptable dans le sac",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "description": "Has a count in the bag",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "items": [
+    {
+      "name": "master-ball",
+      "url": "https://pokeapi.co/api/v2/item/1/"
+    },
+    {
+      "name": "ultra-ball",
+      "url": "https://pokeapi.co/api/v2/item/2/"
+    },
+    {
+      "name": "great-ball",
+      "url": "https://pokeapi.co/api/v2/item/3/"
+    }
+  ],
+  "names": [
+    {
+      "name": "Comptable",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "name": "Countable",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ]
+}

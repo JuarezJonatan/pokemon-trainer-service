@@ -7,7 +7,12 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import com.betwarrior.pokeapi.PokeApi;
+import com.betwarrior.pokeapi.PokeApiAutoConfiguration;
+import com.betwarrior.pokeapi.PokeApiProperties;
 import com.betwarrior.pokestorage.application.exception.CatalogUnavailableException;
 import com.betwarrior.pokestorage.application.exception.UnknownCatalogEntryException;
 import com.betwarrior.pokestorage.application.port.PokemonCatalog;
@@ -16,18 +21,12 @@ import com.betwarrior.pokestorage.domain.species.SpeciesAbility;
 import com.betwarrior.pokestorage.domain.stats.StatValues;
 import com.betwarrior.pokestorage.testsupport.PokeApiStub;
 
-import reactor.netty.http.client.HttpClient;
 import reactor.test.StepVerifier;
-import skaro.pokeapi.PokeApiConfigurationProperties;
-import skaro.pokeapi.PokeApiReactorBaseConfiguration;
-import skaro.pokeapi.PokeApiReactorEndpointConfiguration;
-import skaro.pokeapi.client.ReactiveNonCachingPokeApiClient;
-import skaro.pokeapi.client.WebClientEntityFactory;
 
 class PokeApiPokemonCatalogTest {
 
 	private final PokeApiStub pokeApi = new PokeApiStub();
-	private final PokeApiPokemonCatalog catalog = new PokeApiPokemonCatalog(libraryClient(), Duration.ofMillis(1));
+	private final PokeApiPokemonCatalog catalog = new PokeApiPokemonCatalog(pokeApiClient());
 
 	@AfterEach
 	void stopPokeApi() throws Exception {
@@ -100,14 +99,10 @@ class PokeApiPokemonCatalogTest {
 		assertThat(potion.isPokeball()).isFalse();
 	}
 
-	private ReactiveNonCachingPokeApiClient libraryClient() {
-		PokeApiReactorBaseConfiguration configuration = new PokeApiReactorBaseConfiguration();
-		PokeApiConfigurationProperties properties = new PokeApiConfigurationProperties();
-		properties.setBaseUri(URI.create(pokeApi.baseUrl()));
-		var webClient = configuration.webClient(HttpClient.create(), configuration.jsonEncoder(),
-				configuration.jsonDecoder(), properties);
-		var registry = new PokeApiReactorEndpointConfiguration().endpointRegistry();
-		return new ReactiveNonCachingPokeApiClient(new WebClientEntityFactory(webClient, registry));
+	private PokeApi pokeApiClient() {
+		var properties = new PokeApiProperties(URI.create(pokeApi.baseUrl()), Duration.ofSeconds(2),
+				Duration.ofSeconds(5), DataSize.ofMegabytes(10), new PokeApiProperties.Retry(2, Duration.ofMillis(1)));
+		return PokeApiAutoConfiguration.createClient(WebClient.builder(), properties);
 	}
 
 }

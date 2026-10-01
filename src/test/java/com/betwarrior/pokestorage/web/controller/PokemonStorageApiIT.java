@@ -38,7 +38,7 @@ class PokemonStorageApiIT {
 
 	@DynamicPropertySource
 	static void pointToPokeApiStub(DynamicPropertyRegistry registry) {
-		registry.add("skaro.pokeapi.base-uri", POKE_API::baseUrl);
+		registry.add("pokeapi.base-url", POKE_API::baseUrl);
 	}
 
 	@AfterAll
@@ -244,6 +244,17 @@ class PokemonStorageApiIT {
 
 		postCapture(request).expectStatus().isEqualTo(HttpStatus.SERVICE_UNAVAILABLE)
 				.expectBody().jsonPath("$.code").isEqualTo("pokeapi-unavailable");
+	}
+
+	@Test
+	void givenASpeciesAlreadyLookedUp_whenCapturingItAgain_thenPokeApiIsServedFromTheCache() {
+		Map<String, Object> magnemite = captureRequest("magnemite", "sturdy", List.of("tackle"), "GENDERLESS");
+
+		capture(magnemite);
+		capture(magnemite);
+
+		assertThat(POKE_API.requestsTo("pokemon-species/magnemite")).isEqualTo(1);
+		assertThat(POKE_API.requestsTo("pokemon/81")).isEqualTo(1);
 	}
 
 	@Test

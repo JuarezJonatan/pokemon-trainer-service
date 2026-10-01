@@ -1,0 +1,30 @@
+{
+  "id": 1,
+  "name": "ja-hrkt",
+  "official": true,
+  "iso639": "ja",
+  "iso3166": "jp",
+  "names": [
+    {
+      "name": "日本語 (仮名)",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "일본어 히라가나와 가타카나",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "name": "Japonais Hiragana et Katakana",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "id": 1,
+  "name": "master-ball",
+  "fling_power": null,
+  "fling_effect": null,
+  "attributes": [
+    {
+      "name": "countable",
+      "url": "https://pokeapi.co/api/v2/item-attribute/1/"
+    },
+    {
+      "name": "consumable",
+      "url": "https://pokeapi.co/api/v2/item-attribute/2/"
+    },
+    {
+      "name": "usable-in-battle",
+      "url": "https://pokeapi.co/api/v2/item-attribute/4/"
+    }
+  ],
+  "category": {
+    "name": "standard-balls",
+    "url": "https://pokeapi.co/api/v2/item-category/34/"
+  },
+  "effect_entries": [
+    {
+      "effect": "Utilisé au combat\n:   Capture un Pokémon sauvage sans échouer.\n\n    Si utilisé pendant un combat de dresseurs, rien ne se passe et la ball est perdue.",
+      "short_effect": "Capture un Pokémon sauvage à chaque fois.",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "effect": "Used in battle\n:   Catches a wild Pokémon without fail.\n\n    If used in a trainer battle, nothing happens and the ball is lost.",
+      "short_effect": "Catches a wild Pokémon every time.",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "flavor_text_entries": [
+    {
+      "text": "The best BALL that\ncatches a POKéMON\nwithout fail.",
+      "version_group": {
+        "name": "ruby-sapphire",
+        "url": "https://pokeapi.co/api/v2/version-group/5/"
+      },
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    },
+    {
+      "text": "The best BALL that\ncatches a POKéMON\nwithout fail.",
+      "version_group": {
+        "name": "emerald",
+        "url": "https://pokeapi.co/api/v2/version-group/6/"
+      },
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    },
+    {
+      "text": "The best BALL with the ultimate\nperformance. It will catch any wild\nPOKéMON without fail.",
+      "version_group": {
+        "name": "firered-leafgreen",
+        "url": "https://pokeapi.co/api/v2/version-group/7/"
+      },
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "game_indices": [
+    {
+      "game_index": 1,
+      "generation": {
+        "name": "generation-i",
+        "url": "https://pokeapi.co/api/v2/generation/1/"
+      }
+    },
+    {
+      "game_index": 1,
+      "generation": {
+        "name": "generation-ii",
+        "url": "https://pokeapi.co/api/v2/generation/2/"
+      }
+    },
+    {
+      "game_index": 1,
+      "generation": {
+        "name": "generation-iii",
+        "url": "https://pokeapi.co/api/v2/generation/3/"
+      }
+    }
+  ],
+  "prices": [
+    {
+      "purchase_price": null,
+      "sell_price": 0,
+      "currency": {
+        "name": "poke-dollar",
+        "url": "https://pokeapi.co/api/v2/currency/1/"
+      },
+      "version_group": {
+        "name": "red-blue",
+        "url": "https://pokeapi.co/api/v2/version-group/1/"
+      }
+    },
+    {
+      "purchase_price": null,
+      "sell_price": 0,
+      "currency": {
+        "name": "poke-dollar",
+        "url": "https://pokeapi.co/api/v2/currency/1/"
+      },
+      "version_group": {
+        "name": "yellow",
+        "url": "https://pokeapi.co/api/v2/version-group/2/"
+      }
+    },
+    {
+      "purchase_price": null,
+      "sell_price": 0,
+      "currency": {
+        "name": "poke-dollar",
+        "url": "https://pokeapi.co/api/v2/currency/1/"
+      },
+      "version_group": {
+        "name": "gold-silver",
+        "url": "https://pokeapi.co/api/v2/version-group/3/"
+      }
+    }
+  ],
+  "names": [
+    {
+      "name": "マスターボール",
+      "language": {
+        "name": "ja-hrkt",
+        "url": "https://pokeapi.co/api/v2/language/1/"
+      }
+    },
+    {
+      "name": "마스터볼",
+      "language": {
+        "name": "ko",
+        "url": "https://pokeapi.co/api/v2/language/3/"
+      }
+    },
+    {
+      "name": "大師球",
+      "language": {
+        "name": "zh-hant",
+        "url": "https://pokeapi.co/api/v2/language/4/"
+      }
+    }
+  ],
+  "held_by_pokemon": [],
+  "sprites": {
+    "default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png"
+  },
+  "baby_trigger_for": null,
+  "machines": []
+}

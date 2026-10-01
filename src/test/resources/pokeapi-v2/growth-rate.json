@@ -1,0 +1,56 @@
+{
+  "id": 1,
+  "name": "slow",
+  "formula": "\\frac{5x^3}{4}",
+  "descriptions": [
+    {
+      "description": "lente",
+      "language": {
+        "name": "fr",
+        "url": "https://pokeapi.co/api/v2/language/5/"
+      }
+    },
+    {
+      "description": "langsam",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
+    },
+    {
+      "description": "slow",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "experience": 0
+    },
+    {
+      "level": 2,
+      "experience": 10
+    },
+    {
+      "level": 3,
+      "experience": 33
+    }
+  ],
+  "pokemon_species": [
+    {
+      "name": "growlithe",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/58/"
+    },
+    {
+      "name": "arcanine",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/59/"
+    },
+    {
+      "name": "tentacool",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/72/"
+    }
+  ]
+}
