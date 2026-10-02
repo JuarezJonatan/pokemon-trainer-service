@@ -4,9 +4,13 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.betwarrior.pokestorage.application.exception.PokemonChangedConcurrentlyException;
 import com.betwarrior.pokestorage.application.exception.SlotAlreadyTakenException;
 import com.betwarrior.pokestorage.application.port.PokemonRepository;
 import com.betwarrior.pokestorage.domain.pokemon.PokemonId;
@@ -21,10 +25,20 @@ import reactor.core.publisher.Mono;
 public class InMemoryPokemonRepository implements PokemonRepository {
 
 	private final Map<PokemonId, PokemonSpecimen> pokemon = new ConcurrentHashMap<>();
+	private final Map<PokemonId, Long> storageOrder = new ConcurrentHashMap<>();
+	private final AtomicLong sequence = new AtomicLong();
 	private final AtomicInteger slotConflictsToSimulate = new AtomicInteger();
+	private final AtomicReference<UnaryOperator<PokemonSpecimen>> concurrentChangeToSimulate = new AtomicReference<>();
 
 	public void simulateConcurrentSlotConflicts(int times) {
 		slotConflictsToSimulate.set(times);
+	}
+
+	/**
+	 * Right before the next update, another operation changes the stored Pokemon (and its version).
+	 */
+	public void simulateConcurrentChange(UnaryOperator<PokemonSpecimen> change) {
+		concurrentChangeToSimulate.set(change);
 	}
 
 	public PokemonSpecimen stored(PokemonId id) {
@@ -36,6 +50,7 @@ public class InMemoryPokemonRepository implements PokemonRepository {
 		return Mono.fromCallable(() -> {
 			rejectTakenSlot(specimen);
 			pokemon.put(specimen.id(), specimen);
+			storageOrder.putIfAbsent(specimen.id(), sequence.incrementAndGet());
 			return specimen;
 		});
 	}
@@ -43,15 +58,24 @@ public class InMemoryPokemonRepository implements PokemonRepository {
 	@Override
 	public Mono<PokemonSpecimen> update(PokemonSpecimen specimen) {
 		return Mono.fromCallable(() -> {
+			UnaryOperator<PokemonSpecimen> concurrentChange = concurrentChangeToSimulate.getAndSet(null);
+			if (concurrentChange != null) {
+				PokemonSpecimen current = pokemon.get(specimen.id());
+				pokemon.put(current.id(), concurrentChange.apply(current).withVersion(current.version() + 1));
+			}
+			if (pokemon.get(specimen.id()).version() != specimen.version()) {
+				throw new PokemonChangedConcurrentlyException(specimen.id());
+			}
 			rejectTakenSlot(specimen);
-			pokemon.put(specimen.id(), specimen);
-			return specimen;
+			PokemonSpecimen updated = specimen.withVersion(specimen.version() + 1);
+			pokemon.put(updated.id(), updated);
+			return updated;
 		});
 	}
 
 	@Override
 	public Mono<PokemonSpecimen> findByOwner(TrainerId owner, PokemonId id) {
-		return Mono.justOrEmpty(pokemon.get(id)).filter(found -> found.owner().equals(owner));
+		return Mono.fromSupplier(() -> pokemon.get(id)).filter(found -> found.owner().equals(owner));
 	}
 
 	@Override
@@ -74,6 +98,21 @@ public class InMemoryPokemonRepository implements PokemonRepository {
 	public Mono<Map<PokemonId, StorageSlot>> occupiedSlots(TrainerId owner) {
 		return Mono.fromSupplier(() -> ownedBy(owner)
 				.collect(Collectors.toMap(PokemonSpecimen::id, PokemonSpecimen::slot)));
+	}
+
+	@Override
+	public Flux<PokemonSpecimen> findAll(int offset, int limit) {
+		return Flux.fromStream(() -> pokemon.values().stream()
+				.sorted(Comparator.comparingLong(specimen -> storageOrder.get(specimen.id())))
+				.skip(offset)
+				.limit(limit)
+				.toList()
+				.stream());
+	}
+
+	@Override
+	public Mono<Long> count() {
+		return Mono.fromSupplier(() -> (long) pokemon.size());
 	}
 
 	private Stream<PokemonSpecimen> ownedBy(TrainerId owner) {

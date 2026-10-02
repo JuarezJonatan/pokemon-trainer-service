@@ -18,6 +18,9 @@ import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 /**
  * An individual Pokemon owned by a trainer. Two specimens of the same species differ in
  * their genetics, training, nature, ability, origin and moves.
+ * <p>
+ * {@code version} counts the stored changes of the specimen. Changes made here keep it; the repository
+ * rejects an update whose version is no longer the stored one, so concurrent changes are never lost.
  */
 public record PokemonSpecimen(
 		PokemonId id,
@@ -34,7 +37,10 @@ public record PokemonSpecimen(
 		CaptureOrigin origin,
 		MoveSet moves,
 		Optional<String> heldItem,
-		StorageSlot slot) {
+		StorageSlot slot,
+		long version) {
+
+	public static final long FIRST_VERSION = 0;
 
 	public PokemonSpecimen {
 		Objects.requireNonNull(id);
@@ -53,6 +59,9 @@ public record PokemonSpecimen(
 		if (ability == null || ability.isBlank()) {
 			throw new InvalidValueException("Ability is required");
 		}
+		if (version < FIRST_VERSION) {
+			throw new InvalidValueException("Version cannot be negative");
+		}
 	}
 
 	public boolean isInTeam() {
@@ -61,7 +70,12 @@ public record PokemonSpecimen(
 
 	public PokemonSpecimen storedAt(StorageSlot newSlot) {
 		return new PokemonSpecimen(id, owner, species, nickname, level, individualValues, effortValues, nature,
-				ability, gender, shiny, origin, moves, heldItem, newSlot);
+				ability, gender, shiny, origin, moves, heldItem, newSlot, version);
+	}
+
+	public PokemonSpecimen withVersion(long newVersion) {
+		return new PokemonSpecimen(id, owner, species, nickname, level, individualValues, effortValues, nature,
+				ability, gender, shiny, origin, moves, heldItem, slot, newVersion);
 	}
 
 	public PokemonSpecimen evolveInto(Species current, Species target, Optional<String> requestedAbility) {
@@ -77,7 +91,7 @@ public record PokemonSpecimen(
 		}
 		String newAbility = target.abilityAfterEvolvingFrom(current, ability, requestedAbility);
 		return new PokemonSpecimen(id, owner, target.ref(), nickname, level, individualValues, effortValues, nature,
-				newAbility, gender, shiny, origin, moves, heldItem, slot);
+				newAbility, gender, shiny, origin, moves, heldItem, slot, version);
 	}
 
 }

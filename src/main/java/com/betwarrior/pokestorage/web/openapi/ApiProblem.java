@@ -25,14 +25,16 @@ record ApiProblem(
 		@Schema(description = "Request path that produced the problem",
 				example = "/api/v1/trainers/5f0c2a4e-3b8e-4c1e-9d5a-1b2c3d4e5f60")
 		URI instance,
-		@Schema(description = "Stable machine readable error code. Absent on framework-level 400s (malformed JSON, missing fields)",
-				allowableValues = { "invalid-value", "not-found", "storage-full", "pokemon-not-in-team",
+		@Schema(description = """
+				Stable machine readable error code. Other framework-level errors use the HTTP status name, \
+				e.g. `method-not-allowed` or `unsupported-media-type`""",
+				allowableValues = { "malformed-request", "invalid-value", "not-found", "storage-full", "pokemon-not-in-team",
 						"concurrent-modification", "species-rule-violation", "unknown-pokeapi-entry", "invalid-item",
 						"evolution-not-allowed", "pokeapi-unavailable" },
 				example = "not-found")
 		String code,
 		@Schema(description = "Only for `storage-full`: the area that is full. Absent when both team and box are full")
 		StorageArea area,
-		@Schema(description = "Only for `species-rule-violation`: every rule the Pokemon breaks")
+		@Schema(description = "Only for `species-rule-violation` and `malformed-request`: every rule or field that is wrong")
 		List<String> violations) {
 }

@@ -76,7 +76,11 @@ public class OpenApiConfiguration {
 				Map.entry("invalid-value", problemExample(400, "Bad Request", "invalid-value",
 						"EVs must add up to at most 510 but were 512", TRAINER + "/pokemon")),
 				Map.entry("malformed-request", example("Malformed JSON, missing required field or invalid enum/UUID",
-						frameworkBadRequest(TRAINER + "/pokemon")))));
+						withProperty(problemBody(400, "Bad Request", "malformed-request",
+								"The request is malformed: nature: invalid value 'BRAVEST' (allowed: [HARDY, ...]); species: must not be blank",
+								TRAINER + "/pokemon"), "violations", List.of(
+										"nature: invalid value 'BRAVEST' (allowed: [HARDY, ...])",
+										"species: must not be blank"))))));
 		responses.put(NOT_FOUND, problem("The trainer does not exist, or the Pokemon does not belong to the trainer",
 				Map.entry("trainer", problemExample(404, "Not Found", "not-found",
 						"Trainer 5f0c2a4e-3b8e-4c1e-9d5a-1b2c3d4e5f60 does not exist", TRAINER)),
@@ -92,10 +96,11 @@ public class OpenApiConfiguration {
 						problemBody(409, "Conflict", "storage-full", "The active team is full (capacity 6)",
 								POKEMON + "/storage"), "area", "TEAM"))),
 				Map.entry("concurrent-modification", concurrentModification(POKEMON + "/storage"))));
-		responses.put(EVOLUTION_CONFLICT, problem("Only team members can evolve",
+		responses.put(EVOLUTION_CONFLICT, problem("Only team members can evolve, or the Pokemon kept changing concurrently",
 				Map.entry("pokemon-not-in-team", problemExample(409, "Conflict", "pokemon-not-in-team",
 						"Pokemon 0a9e3d8c-7f41-4b62-a6d3-2c1b0e9f8d7a must be in the active team to evolve",
-						POKEMON + "/evolution"))));
+						POKEMON + "/evolution")),
+				Map.entry("concurrent-modification", concurrentModification(POKEMON + "/evolution"))));
 		responses.put(CAPTURE_REJECTED, problem("The Pokemon is not consistent with PokeAPI data",
 				Map.entry("species-rule-violation", speciesRuleViolation(TRAINER + "/pokemon", List.of(
 						"pikachu cannot have ability 'intimidate' (allowed: [static, lightning-rod])",
@@ -132,7 +137,7 @@ public class OpenApiConfiguration {
 
 	private static Example concurrentModification(String instance) {
 		return problemExample(409, "Conflict", "concurrent-modification",
-				"The storage changed concurrently, please retry", instance);
+				"The Pokemon or the storage kept changing concurrently, please retry", instance);
 	}
 
 	private static Example speciesRuleViolation(String instance, List<String> violations) {
@@ -155,16 +160,6 @@ public class OpenApiConfiguration {
 		body.put("detail", detail);
 		body.put("instance", instance);
 		body.put("code", code);
-		return body;
-	}
-
-	private static Map<String, Object> frameworkBadRequest(String instance) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("type", "about:blank");
-		body.put("title", "Bad Request");
-		body.put("status", 400);
-		body.put("detail", "Invalid request content.");
-		body.put("instance", instance);
 		return body;
 	}
 

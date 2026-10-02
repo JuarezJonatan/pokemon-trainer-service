@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.betwarrior.pokestorage.application.pagination.Page;
 import com.betwarrior.pokestorage.application.usecase.pokemon.CapturePokemonCommand;
-import com.betwarrior.pokestorage.application.usecase.storage.BoxPage;
 import com.betwarrior.pokestorage.application.usecase.storage.TeamMember;
 import com.betwarrior.pokestorage.domain.pokemon.Gender;
 import com.betwarrior.pokestorage.domain.pokemon.PokemonSpecimen;
@@ -217,9 +217,24 @@ public final class PokemonPayloads {
 			@Schema(description = "Pokemon in the box", example = "1") long totalElements,
 			@Schema(description = "Number of pages", example = "1") long totalPages) {
 
-		public static BoxResponse from(BoxPage page) {
-			return new BoxResponse(page.pokemon().stream().map(PokemonResponse::from).toList(), page.page(),
-					page.size(), page.totalElements(), page.totalPages());
+		public static BoxResponse from(Page<PokemonSpecimen> page) {
+			return new BoxResponse(page.map(PokemonResponse::from).content(), page.page(), page.size(),
+					page.totalElements(), page.totalPages());
+		}
+
+	}
+
+	@Schema(description = "A page of every stored Pokemon, of all trainers")
+	public record PokemonPageResponse(
+			@Schema(description = "Pokemon in this page, in the order they were stored") List<PokemonResponse> pokemon,
+			@Schema(description = "Zero-based page number", example = "0") int page,
+			@Schema(description = "Page size", example = "20") int size,
+			@Schema(description = "Stored Pokemon", example = "1") long totalElements,
+			@Schema(description = "Number of pages", example = "1") long totalPages) {
+
+		public static PokemonPageResponse from(Page<PokemonSpecimen> page) {
+			return new PokemonPageResponse(page.map(PokemonResponse::from).content(), page.page(), page.size(),
+					page.totalElements(), page.totalPages());
 		}
 
 	}

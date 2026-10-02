@@ -12,7 +12,7 @@ import com.betwarrior.pokestorage.application.exception.TrainerNotFoundException
 import com.betwarrior.pokestorage.application.port.PokemonCatalog;
 import com.betwarrior.pokestorage.application.port.PokemonRepository;
 import com.betwarrior.pokestorage.application.port.TrainerRepository;
-import com.betwarrior.pokestorage.application.usecase.storage.SlotRetry;
+import com.betwarrior.pokestorage.application.usecase.storage.ConcurrentUpdateRetry;
 import com.betwarrior.pokestorage.domain.pokemon.CaptureOrigin;
 import com.betwarrior.pokestorage.domain.pokemon.Level;
 import com.betwarrior.pokestorage.domain.pokemon.MoveSet;
@@ -70,7 +70,7 @@ public class CapturePokemon {
 				.map(slot -> individual.toSpecimen(command, species, slot))
 				.flatMap(pokemon::insert);
 		return transaction.transactional(Mono.defer(() -> insert))
-				.retryWhen(SlotRetry.onConcurrentSlotAssignment());
+				.retryWhen(ConcurrentUpdateRetry.boundedBy(storage.capacity()));
 	}
 
 	private static final class Individual {
@@ -101,7 +101,7 @@ public class CapturePokemon {
 		private PokemonSpecimen toSpecimen(CapturePokemonCommand command, Species species, StorageSlot slot) {
 			return new PokemonSpecimen(PokemonId.random(), command.trainer(), species.ref(), command.nickname(),
 					level, ivs, evs, command.nature(), ability, command.gender(), command.shiny(), origin, moves,
-					heldItem, slot);
+					heldItem, slot, PokemonSpecimen.FIRST_VERSION);
 		}
 
 	}

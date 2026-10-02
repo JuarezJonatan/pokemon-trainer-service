@@ -10,6 +10,8 @@ import com.betwarrior.pokestorage.domain.trainer.Trainer;
 import com.betwarrior.pokestorage.domain.trainer.TrainerId;
 
 import lombok.RequiredArgsConstructor;
+import io.r2dbc.spi.Readable;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -31,8 +33,28 @@ public class R2dbcTrainerRepository implements TrainerRepository {
 	public Mono<Trainer> findById(TrainerId id) {
 		return database.sql("select id, name from trainer where id = :id")
 				.bind("id", id.value())
-				.map(row -> new Trainer(new TrainerId(row.get("id", UUID.class)), row.get("name", String.class)))
+				.map(R2dbcTrainerRepository::toTrainer)
 				.one();
+	}
+
+	@Override
+	public Flux<Trainer> findAll(int offset, int limit) {
+		return database.sql("select id, name from trainer order by created_at, id offset :offset limit :limit")
+				.bind("offset", offset)
+				.bind("limit", limit)
+				.map(R2dbcTrainerRepository::toTrainer)
+				.all();
+	}
+
+	@Override
+	public Mono<Long> count() {
+		return database.sql("select count(*) as total from trainer")
+				.map(row -> row.get("total", Long.class))
+				.one();
+	}
+
+	private static Trainer toTrainer(Readable row) {
+		return new Trainer(new TrainerId(row.get("id", UUID.class)), row.get("name", String.class));
 	}
 
 }

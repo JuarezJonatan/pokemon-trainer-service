@@ -1,8 +1,12 @@
 package com.betwarrior.pokestorage.application.usecase.storage;
 
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.gyarados;
+import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.magikarp;
 import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.pikachu;
 import static com.betwarrior.pokestorage.testsupport.PokemonFixtures.specimenOf;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -64,6 +68,18 @@ class TransferPokemonTest {
 		PokemonSpecimen result = transferPokemon.transfer(PokemonFixtures.ASH, pikachu.id(), StorageArea.TEAM).block();
 
 		assertThat(result).isEqualTo(pikachu);
+	}
+
+	@Test
+	void givenAnEvolutionCommittedWhileDepositing_whenTheDepositIsStored_thenItIsRetriedAndKeepsTheEvolution() {
+		PokemonSpecimen magikarp = pokemon.insert(specimenOf(magikarp(), "swift-swim", StorageSlot.team(1))).block();
+		pokemon.simulateConcurrentChange(current -> current.evolveInto(magikarp(), gyarados(), Optional.empty()));
+
+		PokemonSpecimen moved = transferPokemon.transfer(PokemonFixtures.ASH, magikarp.id(), StorageArea.BOX).block();
+
+		assertThat(moved.species().name()).isEqualTo("gyarados");
+		assertThat(moved.slot()).isEqualTo(StorageSlot.box(1));
+		assertThat(pokemon.stored(magikarp.id())).isEqualTo(moved);
 	}
 
 	@Test
