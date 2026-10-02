@@ -34,11 +34,11 @@ Service that manages **each trainer's individual Pokémon**, separating the **Ac
 
 ## How to run it
 
-Requirements: **Java 21**, **Maven 3.9+** and **Docker** (for Postgres and the integration tests).
+Requirements: **Java 21** and **Docker** (for Postgres and the integration tests). Maven is not needed: `./mvnw` downloads Maven 3.9 on first use (`mvnw.cmd` on Windows).
 
 ```bash
 docker compose up -d                 # Postgres 16 on localhost:5432
-mvn spring-boot:run                  # the app on http://localhost:8080
+./mvnw spring-boot:run               # the app on http://localhost:8080
 ```
 
 | Resource | URL |
@@ -388,8 +388,8 @@ In addition, Spring Boot 2.4, reactor-extra and the `adopt` Java distribution we
 ## Tests
 
 ```bash
-mvn test      # unit: domain, use cases, PokéAPI client and adapter, ArchUnit (no Docker needed)
-mvn verify    # + integration with a real Postgres (Testcontainers) and the full app (needs Docker)
+./mvnw test      # unit: domain, use cases, PokéAPI client and adapter, ArchUnit (no Docker needed)
+./mvnw verify    # + integration with a real Postgres (Testcontainers) and the full app (needs Docker)
 ```
 
 | Level | What it covers | How |
@@ -413,7 +413,7 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 - **New PokéAPI data for the service:** add it to `Species` and map it in `PokeApiPokemonCatalog`. For tests, add a trimmed fixture to `src/test/resources/pokeapi/` named `{resource}-{name}.json`.
 - **A new kind of PokéAPI resource:** add its record to `com.betwarrior.pokeapi.model.<group>`, a method to `PokeApi` and a real, trimmed response to `src/test/resources/pokeapi-v2/{endpoint}.json`. `PokeApiEndpointsTest` checks both.
 - **Architecture decisions:** recorded as ADRs in [`docs/adr`](docs/adr).
-- **CI:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `mvn verify` on every push and PR.
+- **CI:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `./mvnw verify` on every push and PR.
 
 ## Proposed evolution
 
