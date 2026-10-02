@@ -1,8 +1,8 @@
 # pokemon-trainer-service
 
-Service that manages **each trainer's individual Pokémon**, separating the **Active Team** from the **PC Box**. It is built on top of the inherited [`pokeapi-reactor`](https://github.com/SirSkaro/pokeapi-reactor) project, a reactive client for [PokéAPI](https://pokeapi.co/), which has since been replaced by a declarative client ([`com.betwarrior.pokeapi`](#pokéapi-client)).
+Service that manages **each trainer's individual Pokémon**, separating the **Active Team** from the **PC Box**. Static Pokémon data (species, abilities, moves, items) comes from [PokéAPI](https://pokeapi.co/) through the project's own declarative client, [`com.betwarrior.pokeapi`](#pokéapi-client).
 
-> Solution to the *"Pokémon Box and Active Team"* technical challenge. This README replaces the library's original one: it describes what was built, why, and how to use and maintain the project. The library's original documentation is summarized in [The inherited library](#the-inherited-library-pokeapi-reactor).
+> **TODO:** delete [`docs/SOLUTION.md`](docs/SOLUTION.md) once the technical defense of the challenge is over. It explains how the challenge was solved: decisions and alternatives, findings in the inherited code and pending work. It is kept in the repo only for the defense; this README covers everything needed to work on the project.
 
 ## Contents
 
@@ -13,12 +13,9 @@ Service that manages **each trainer's individual Pokémon**, separating the **Ac
 - [Domain model and rules](#domain-model-and-rules)
 - [Persistence](#persistence)
 - [PokéAPI client](#pokéapi-client)
-- [Decisions and alternatives](#decisions-and-alternatives)
-- [Changes and findings in the inherited library](#changes-and-findings-in-the-inherited-library)
 - [Tests](#tests)
 - [Maintenance guide](#maintenance-guide)
-- [Proposed evolution](#proposed-evolution)
-- [Tools used](#tools-used)
+- [Tech stack](#tech-stack)
 
 ---
 
@@ -172,7 +169,7 @@ flowchart LR
 
 | Package | Responsibility | May depend on |
 |---|---|---|
-| `domain` | Business rules: value objects, specimen, storage, species, evolution, stat formula | nothing (no Spring, Reactor or the library) |
+| `domain` | Business rules: value objects, specimen, storage, species, evolution, stat formula | nothing (no Spring, Reactor or the PokéAPI client) |
 | `application` | Use cases (`usecase`: `CapturePokemon`, `ListTeam`, `TransferPokemon`, `EvolvePokemon`, …) and the interfaces they need (`port`: `PokemonRepository`, `TrainerRepository`, `PokemonCatalog`) | `domain` |
 | `infrastructure.persistence` | R2DBC implementation of the repositories | `application`, `domain` |
 | `infrastructure.pokeapi` | `PokeApiPokemonCatalog`: translates PokéAPI records into the domain | `application`, `domain`, PokéAPI client |
@@ -210,8 +207,6 @@ com.betwarrior.pokestorage
 ```
 
 Tests mirror the same packages.
-
-**Why this style.** PokéAPI's model is *snake_case*, huge and designed for the games, not for this business. The domain doesn't know about it: if tomorrow it is replaced by another client, or by a local copy of the data, only `infrastructure.pokeapi` changes. Also, each layer has a clear responsibility, which makes onboarding new people easier.
 
 ### Capture flow
 
@@ -261,8 +256,6 @@ sequenceDiagram
 | Calculated stats | `StatCalculator` | Official formula (Gen III+), validated against the reference example of a level 78 Garchomp |
 | Evolution | `PokemonSpecimen.evolveInto` | Team only; target = **direct** evolution; everything is preserved except species and ability |
 
-**Interpreting the statement.** The PDF says stats "start from 1" and that "genetic values" from 0 to 31 are added to them. I modeled it as in the games: the **base stats** (≥ 1) come from PokéAPI per species, and the **IVs** (0–31) are each specimen's own genetics. The final stat combines base, IVs, EVs, level and nature, and is exposed in the team view.
-
 ### Evolution
 
 - **Direct-line validation:** a target species is valid if its `evolves_from_species` in PokéAPI is the current species. That covers simple lines (Bulbasaur → Ivysaur → Venusaur, without skipping stages) and branched ones (Eevee → Vaporeon, Jolteon, …), with a single resource per species and without walking the `EvolutionChain` tree.
@@ -271,20 +264,20 @@ sequenceDiagram
 
 ## Persistence
 
-PostgreSQL 16 with **reactive (R2DBC)** access, consistent with WebFlux and with the library. The schema is versioned with **Flyway** in [`db/migration`](src/main/resources/db/migration).
+PostgreSQL 16 with **reactive (R2DBC)** access, consistent with WebFlux. The schema is versioned with **Flyway** in [`db/migration`](src/main/resources/db/migration).
 
 - Two tables: `trainer` and `pokemon`. The specimen's attributes are **flat columns** (`iv_hp`, `ev_speed`, `nature`, …), queryable and indexable. Moves are stored in a `varchar[]`.
 - **The database also protects the invariants** with `CHECK` constraints (IV/EV ranges, EV total ≤ 510, 1–4 moves, level 1–100), in case someone writes outside the app.
 - **Concurrency** is handled with two optimistic mechanisms, and nothing is locked:
   - **Slots:** `UNIQUE (trainer_id, storage_area, storage_slot)`. If two simultaneous captures or transfers pick the same free slot, the database rejects one. Since the domain only assigns slots between 1 and the capacity, **the limit is never exceeded**.
-  - **Lost updates:** each Pokémon has a `version` (`V2__add_pokemon_version.sql`). An update only applies `where version = :read` and increments it. Without it, an evolution and a deposit of the same Pokémon at once both answered 200, but the last write silently undid the evolution.
+  - **Lost updates:** each Pokémon has a `version` (`V2__add_pokemon_version.sql`). An update only applies `where version = :read` and increments it.
   - **Retry:** both conflicts are retried from a fresh read (`ConcurrentUpdateRetry`), with a jittered backoff and up to as many attempts as there are slots. Every lost race means another operation committed a slot this one hadn't seen, so every capture that fits gets in. An evolution retried after a deposit is rejected with `pokemon-not-in-team`; a deposit retried after an evolution moves the evolved Pokémon.
   - Integration tests fire as many concurrent captures as free slots (all succeed), 20 captures against 8 slots (never more than 8), and an evolution and a deposit of the same Pokémon at once (no accepted change is lost).
 - Repositories use `DatabaseClient` with explicit SQL, without Spring Data: the mapping is visible and there is no magic.
 
 ## PokéAPI client
 
-`com.betwarrior.pokeapi` replaces the inherited `skaro.pokeapi` library ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)). It is a **Spring HTTP interface**: one method per PokéAPI endpoint, implemented by Spring on top of `WebClient`.
+`com.betwarrior.pokeapi` is a **Spring HTTP interface**: one method per PokéAPI endpoint, implemented by Spring on top of `WebClient`.
 
 ```java
 @Autowired PokeApi pokeApi;
@@ -340,51 +333,6 @@ Outside Spring Boot, `PokeApiAutoConfiguration.createClient(WebClient.builder(),
 
 `ResourceNotFoundException` becomes "doesn't exist" (422), and any other failure becomes `503`.
 
-## Decisions and alternatives
-
-| Decision | Alternatives considered | Why |
-|---|---|---|
-| Spring Boot 3.5 + Java 17 ([ADR 0001](docs/adr/0001-migrate-to-spring-boot-3.md)), then Java 21 | Stay on 2.4.3; 2.7; 4.1 | 2.x is unsupported. 4.1 means Jackson 3, which the library relies on heavily. 3.5 brings `jakarta` and `ProblemDetail` with limited risk. Java 21 is the current LTS |
-| Declarative PokéAPI client on Spring HTTP interfaces ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)) | Fix `skaro.pokeapi` in place; framework-free client; generate from PokéAPI's OpenAPI spec | Spring already provides the HTTP client, caching and configuration, so the client is an interface plus records. No endpoint registry or `Class` arguments |
-| Single module with layers + ArchUnit | Maven multi-module; JPMS | Less ceremony. ArchUnit gives a guarantee similar to separate modules |
-| WebFlux + R2DBC | Spring MVC + JPA | The library is reactive; mixing blocking and reactive models adds complexity and the risk of blocking the event loop |
-| Flat columns | JSONB with all the genetics | Invariants are also enforced in the database (`CHECK`) and the data is queryable. JSONB is more flexible but opaque |
-| Unique constraint for slots + optimistic lock (`version`) per Pokémon | Optimistic lock on the whole trainer; `SELECT … FOR UPDATE` | No long-held locks, and conflicts only happen on an actual race. A version per Pokémon lets operations on different Pokémon of the same trainer run in parallel; the unique constraint protects the capacity |
-| Fixed slots (no compaction) | Reorder the team when a Pokémon leaves | The bonus requires preserving the "exact slot" |
-| Validate evolution with `evolves_from_species` | Walk the `EvolutionChain` | Simpler: 1 resource per species, already cached by the capture. (The inherited library couldn't even request `EvolutionChain`; the new client can) |
-| Team composition in the backend | Let the client call PokéAPI | The statement asks for a composite view; it also centralizes caching and resilience |
-| If PokéAPI is down, `GET /team` returns `503` | Degrade: return the team without species data | Simple, explicit contract. Degradation is a possible improvement (see evolution) |
-| RFC 7807 errors with `code` | Custom format | Standard, natively supported by Spring 6 |
-| IVs required, EVs optional | Everything optional with random defaults | IVs define the individual; a freshly caught Pokémon has no training (EVs at 0) |
-| Lombok only for injection constructors and loggers | Lombok everywhere (`@Data`, `@Value`, `@Builder`); no Lombok | Domain objects and payloads are Java `record`s, which already remove the boilerplate Lombok is usually added for. Lombok removes what records can't: constructors that only assign dependencies and logger fields. The domain stays free of it |
-| Authorization not implemented | JWT per trainer | Out of scope; left for the proposed evolution |
-
-## Changes and findings in the inherited library
-
-While solving the challenge, the criterion was: **only what the upgrade required or what blocked the feature was modified.** Everything else was documented. The library has since been **replaced and deleted**; every finding below is fixed in the new client ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)). The tables are kept as a record of why.
-
-### Modified
-
-| Change | Reason |
-|---|---|
-| `javax.validation` → `jakarta.validation` | Upgrade to Boot 3 |
-| `CacheMono` replaced in `ReactiveCacheManagerCacheFacade` | Class removed in reactor-extra 3.5. As a side effect, **errors are no longer cached**: before, a momentary PokéAPI outage stayed in the cache |
-| `PropertyNamingStrategy.SNAKE_CASE` → `PropertyNamingStrategies.SNAKE_CASE` | Removed in Jackson 2.13+ |
-| **`Item.category` was a list, but PokéAPI returns an object** | **No `Item` could be deserialized**, and the feature needs to validate the Poké Ball and the held item. Regression test with a real response |
-
-### Detected, not modified
-
-| # | Finding | Impact | Possible fix |
-|---|---|---|---|
-| 1 | `ReactiveCachingPokeApiClient` caches every listing (`getResource(Class)` and paginated ones) in the `NamedApiResourceList` cache under the key `"collection"`, **regardless of type** | Listing abilities after listing Pokémon returns the Pokémon list | Include the resource class in the key or in the cache name |
-| 2 | The `Region` endpoint is registered as `pokemon-region`; the correct one is `region` | `getResource(Region.class, …)` always fails (PokéAPI responds 400) | Fix the mapping in `PokeApiReactorEndpointConfiguration` |
-| 3 | `EvolutionChain` doesn't implement `PokeApiResource` | It can't be requested with the client: the generics prevent it | Implement the interface (`getName()` → `null`) |
-| 4 | The original README documents the property `skaro.pokeapi.max-buffer-size`, but the real one is `max-bytes-to-buffer` | The documented setting is silently ignored | Fix the documentation or add an alias |
-| 5 | The default buffer (565 KB) is smaller than the `/pokemon/mew` response (~670 KB) | Deserialization error on Pokémon with many moves | Raise the default. This service sets it to 10 MB |
-| 6 | Fields that don't match PokéAPI's JSON: `BerryFlavor.barries`, `ContestComboDetail.userBefore`/`userAfter`, `LocationArea.Id`/`encoutnerMethodRates`, `EvolutionChain.item` (really `baby_trigger_item`), `Item.cost` (now `prices`) | That data is silently `null` | Found by comparing every record with a real response while writing the new client |
-
-In addition, Spring Boot 2.4, reactor-extra and the `adopt` Java distribution were discontinued. The upgrade solved all of that.
-
 ## Tests
 
 ```bash
@@ -412,22 +360,9 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 - **Changing the schema:** new migration `V{n}__description.sql`. Already-applied migrations are never edited.
 - **New PokéAPI data for the service:** add it to `Species` and map it in `PokeApiPokemonCatalog`. For tests, add a trimmed fixture to `src/test/resources/pokeapi/` named `{resource}-{name}.json`.
 - **A new kind of PokéAPI resource:** add its record to `com.betwarrior.pokeapi.model.<group>`, a method to `PokeApi` and a real, trimmed response to `src/test/resources/pokeapi-v2/{endpoint}.json`. `PokeApiEndpointsTest` checks both.
-- **Architecture decisions:** recorded as ADRs in [`docs/adr`](docs/adr).
 - **CI:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `./mvnw verify` on every push and PR.
 
-## Proposed evolution
-
-1. **Spring Boot 4.x**: 3.5 no longer has OSS support. It requires migrating the library to Jackson 3 (see ADR 0001).
-2. **Authentication and authorization** per trainer (OAuth2/JWT): today anyone with the ID can operate on any trainer.
-3. **Extract `com.betwarrior.pokeapi`** into its own module or repository with semantic versioning if another service needs it.
-4. **Graceful degradation** of `GET /team` when PokéAPI doesn't respond: return the specimen data with `species: null` and a warning.
-5. **Distributed cache** (Redis) if the service scales horizontally, or a **local PokéAPI replica** (it's open source) to avoid depending on a rate-limited public service.
-6. **Observability:** Micrometer metrics (PokéAPI latency, cache hit ratio, slot conflicts) and tracing.
-7. **Domain events** (`PokemonCaptured`, `PokemonEvolved`) with an outbox, if other services need to know.
-8. **Multiple PC boxes** (Box 1..N), as in the games: `StorageSlot` already models area + position and would be extended with a box number.
-9. Missing operations: release a Pokémon, change the held item, reorder the team (slot swap), level up or train EVs.
-
-## Tools used
+## Tech stack
 
 - **Java 21**, **Spring Boot 3.5** (WebFlux, Data R2DBC, Validation, Cache, Actuator), **Project Reactor**
 - **PostgreSQL 16**, **R2DBC**, **Flyway**
@@ -435,12 +370,5 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 - **Lombok**, only for constructor injection (`@RequiredArgsConstructor`) and logging (`@Slf4j`)
 - **JUnit 5**, **AssertJ**, **Mockito (BDDMockito)**, **Reactor Test**, **Testcontainers**, **OkHttp MockWebServer**, **ArchUnit**, **JaCoCo**
 - **Docker Compose**, **GitHub Actions**
-- **Claude Code** as an AI assistant during design, implementation and review
-
----
-
-## The inherited library: pokeapi-reactor
-
-A non-blocking, caching PokéAPI client, originally published as a library by [SirSkaro](https://github.com/SirSkaro/pokeapi-reactor) (package `skaro.pokeapi`). This project started from it, kept its commit history, and replaced it with [`com.betwarrior.pokeapi`](#pokéapi-client). The old code was then deleted ([ADR 0002](docs/adr/0002-pokeapi-client-v2.md)); it can still be browsed in git history.
 
 MIT license (see [LICENSE](LICENSE)).
