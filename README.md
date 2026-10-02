@@ -2,7 +2,7 @@
 
 Service that manages **each trainer's individual Pokémon**, separating the **Active Team** from the **PC Box**. Static Pokémon data (species, abilities, moves, items) comes from [PokéAPI](https://pokeapi.co/) through the project's own declarative client, [`com.betwarrior.pokeapi`](#pokéapi-client).
 
-> **TODO:** delete [`docs/SOLUTION.md`](docs/SOLUTION.md) once the technical defense of the challenge is over. It explains how the challenge was solved: decisions and alternatives, findings in the inherited code and pending work. It is kept in the repo only for the defense; this README covers everything needed to work on the project.
+> **TODO:** delete [`docs/SOLUTION.md`](docs/SOLUTION.md) once the technical defense of the challenge is over. It is the detailed write-up of how the challenge was solved (alternatives, findings in the inherited code, pending work) and is kept only for the defense. The summary in [Work done and decisions](#work-done-and-decisions) stays.
 
 ## Contents
 
@@ -15,6 +15,7 @@ Service that manages **each trainer's individual Pokémon**, separating the **Ac
 - [PokéAPI client](#pokéapi-client)
 - [Tests](#tests)
 - [Maintenance guide](#maintenance-guide)
+- [Work done and decisions](#work-done-and-decisions)
 - [Tech stack](#tech-stack)
 
 ---
@@ -361,6 +362,35 @@ Convention: tests follow a **BDD style without Gherkin**. The method name descri
 - **New PokéAPI data for the service:** add it to `Species` and map it in `PokeApiPokemonCatalog`. For tests, add a trimmed fixture to `src/test/resources/pokeapi/` named `{resource}-{name}.json`.
 - **A new kind of PokéAPI resource:** add its record to `com.betwarrior.pokeapi.model.<group>`, a method to `PokeApi` and a real, trimmed response to `src/test/resources/pokeapi-v2/{endpoint}.json`. `PokeApiEndpointsTest` checks both.
 - **CI:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `./mvnw verify` on every push and PR.
+
+## Work done and decisions
+
+This project started from [`pokeapi-reactor`](https://github.com/SirSkaro/pokeapi-reactor), an inherited reactive PokéAPI client library, and evolved it into this service.
+
+**Work done**
+- **Upgrade:** Spring Boot 2.4 → 3.5 and Java 11 → 21.
+- **New PokéAPI client:** `com.betwarrior.pokeapi`, built on Spring HTTP interfaces, with immutable records, typed errors and caching. It replaces the inherited `skaro.pokeapi`, which was deleted, and fixes its mapping bugs.
+- **New feature:**
+  - individual Pokémon with their genetics, training and origin;
+  - the active team and the PC box, with persistence;
+  - a REST API with RFC 7807 errors, documented with OpenAPI.
+- **Bonus:** evolution, for simple and branched lines, keeping the Pokémon's identity, genetics and exact slot.
+- **Hardening after end-to-end testing with curl:**
+  - concurrency safety: a unique slot constraint, an optimistic lock and bounded retries;
+  - a stable `code` on every error.
+
+**Key decisions**
+- **Modular monolith:** a single Maven module organized in layers, with the dependency rules enforced by ArchUnit, instead of a multi-module build.
+- **Reactive end to end:** WebFlux + R2DBC, to match the reactive PokéAPI client, instead of MVC + JPA.
+- **Database:** PostgreSQL with flat columns and `CHECK` constraints, so the database also enforces the domain invariants, instead of a JSONB column.
+- **Concurrency without locks:** a unique constraint on slots plus a version per Pokémon. A lost race is retried from a fresh read.
+- **Fixed slots:** slots are never compacted, which keeps a Pokémon's exact slot when it evolves.
+- **Stats:**
+  - base stats (≥ 1) come from PokéAPI per species;
+  - IVs (0–31) are each specimen's own genetics;
+  - the final stat uses the games' official formula.
+
+The full detail is in [`docs/SOLUTION.md`](docs/SOLUTION.md): the alternatives considered, the records of the migration and client decisions, the findings in the inherited code, the bugs found, and the pending work.
 
 ## Tech stack
 
